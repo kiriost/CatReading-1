@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
+# coding=utf-8
 
 import os
 from .custom_settings import *
@@ -38,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'utils',
+    'account',
+
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,8 +61,7 @@ ROOT_URLCONF = 'CatReading.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 模板目录地址设置
-        'DIRS':  [os.path.join(BASE_DIR, 'templates')],
+        'DIRS':  [os.path.join(BASE_DIR, 'template/src/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,3 +129,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
