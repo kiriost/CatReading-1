@@ -319,8 +319,19 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
     white-space: nowrap;
     overflow: hidden;
 }
+<<<<<<< HEAD
+.list li:nth-child(10){
+	border-bottom: none;
+}
+.list a{
+	display: inline-block;
+	color: #636563;
+	width: 100%;
+	height: 100%;
+=======
 .list a{
 	color: #636563;
+>>>>>>> b6ef491c76804a8f6c095f69a01ed5df03cd17d0
 }
 .count{
 	height: 62px;
