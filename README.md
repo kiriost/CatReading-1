@@ -8,7 +8,8 @@ Ubuntu 16.04 64位
 * Nginx 1.10.0
 * Uwsgi 2.0.14
 * Python 2.7.12
-* Djanngo 1.9.0
+* Django 1.9.0
+* djangorestframework 3.2.5
 * MySQL 5.7.16
 
 开发工具
