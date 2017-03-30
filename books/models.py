@@ -1,8 +1,10 @@
+# **coding: utf-8**
 from __future__ import unicode_literals
 
 from django.db import models
 
 # Create your models here.
+
 # 书籍基本信息模型
 class BookInfo(models.Model):
     # 书籍类型选项
@@ -26,10 +28,15 @@ class BookInfo(models.Model):
         (0, "未完结"),
         (1, "已完成"),
     )
+    # 书籍id
+    book_id = models.BigIntegerField("书籍id", auto_created=True)
     # 书名
+
+    author = models.CharField("作者", max_length=20, default="佚名")
+
     name = models.CharField("书名", max_length=20)
     # 书籍封面
-    cover = models.ImageField("书籍封面")
+    coverImg = models.ImageField("书籍封面")
     # 书籍简介
     describe = models.TextField("书籍概要简介")
     # 书籍类型
@@ -71,7 +78,7 @@ class BooksContent(models.Model):
     # 章节数
     chapters_id = models.SmallIntegerField("章节数")
     # 章节名称
-    chapters_name = models.CharField("章节名称")
+    chapters_name = models.CharField("章节名称", max_length=20)
     # 该章节的内容
     chapters_content = models.TextField("章节内容")
     # 改章节更新时间
