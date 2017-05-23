@@ -1,0 +1,33 @@
+{
+	"chaptersList":[{
+		"chaptersId":1,
+		"chaptersName": "第1章"
+	},{
+		"chaptersId":2,
+		"chaptersName": "第2章"
+	},{
+		"chaptersId":3,
+		"chaptersName": "第3章"
+	},{
+		"chaptersId":4,
+		"chaptersName": "第4章"
+	},{
+		"chaptersId":5,
+		"chaptersName": "第5章"
+	},{
+		"chaptersId":6,
+		"chaptersName": "第6章"
+	},{
+		"chaptersId":7,
+		"chaptersName": "第7章"
+	},{
+		"chaptersId":8,
+		"chaptersName": "第8章"
+	},{
+		"chaptersId":9,
+		"chaptersName": "第9章"
+	},{
+		"chaptersId":10,
+		"chaptersName": "第10章"
+	}]
+}

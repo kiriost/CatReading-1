@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=0.36,user-scalable=no,minimal-ui">
 		<meta name="format-detection" content="telephone=no">
-		<link rel="stylesheet" href="/static/src/css/reset.css">
+		<link rel="stylesheet" href="../../../../static/src/css/reset.css">
 		<title>阅读器</title>
 		<style type="text/css">
 		html{
@@ -53,7 +53,7 @@
 			margin-left: 18px;
 		}
 		.middle h4{
-			font-size: 1.4em;
+			font-size: 56px;
 			color: #353535;
 			font-weight: 400;
 			text-align: center;
@@ -76,7 +76,7 @@
  			opacity: 1;
  			text-align: center;
  			line-height: 68px;
- 			font-size: 0.9em;
+ 			font-size: 36px;
  			color: #999;
  		}
  		.colordeflaut{
@@ -120,7 +120,7 @@
  			text-align: center;
  			line-height: 62px;
  			margin-left: 10px;
- 			font-size: 0.9em;
+ 			font-size: 36px;
  		}
  		.contentTxt{
  			font-size: 44px;
@@ -152,6 +152,7 @@
  			line-height: 90px;
  			color: #fff;
  			padding-top: 100px;
+ 			font-size: 40px;
  		}
  		.u-tap li{
  			display: inline-block;
@@ -216,10 +217,10 @@
 			<!-- collection结束 -->
 			<div class="content">
 				<div class="navRoute">
-					<a href="#" class="navHome"></a><span class="navjiantou"></span><a href="#" class="navTxt" id="bookName">{% verbatim %}{{ bookName }}{% endverbatim %}</a><span class="navjiantou"></span><a href="#" class="navTxt">章节目录</a>
+					<a href="#" class="navHome"></a><span class="navjiantou"></span><a href="#" class="navTxt" id="bookName"></a><span class="navjiantou"></span><a href="#" class="navTxt">章节目录</a>
 				</div>
 				<div class="middle">
-					<h4 id="title">{% verbatim %}{{ charpterTitle }}{% endverbatim %}</h4>
+					<h4 id="title"></h4>
 					<div class="adjust clearfix">
 						<div class="bgAdj">
 							<div class="contentBg colordeflaut" id="deflautColor">A</div>
@@ -229,17 +230,16 @@
 							<div class="contentSwitch night" id="dayNight"></div>
 						</div>
 						<div class="fontAdj">
-							<span id="bigger">+ A</span>
-							<span id="smaller">- A</span>
+							<span id="bigger" v-on:click="fontAdj">+ A</span>
+							<span id="smaller" v-on:click="fontAdj">- A</span>
 						</div>
 					</div>
 					<!-- adjust结束 -->
 					<div class="contentTxt" id="contentTxt">
-						<p>{% verbatim %}{{ charpterContents }}{% endverbatim %}</p>
+						<p></p>
 					</div>
 
-					<!--
-						 -->
+					<!--	 -->
 					<div class="goButton">
 						<ul class="u-tap">
 							<li class="prev-button">上一章</li>
@@ -252,8 +252,7 @@
 			<!-- content结束 -->
 		</div>
 		<!-- root结束 -->
-		<script src="/static/src/js/lib/zepto.min.js"></script>
-		<script src="/static/src/js/lib/vue.js"></script>
+		<script src="../../../../static/src/js/lib/zepto.min.js"></script>
 		<script>
 			//缓存方法封装
 			var Util = (function(){
@@ -368,34 +367,85 @@
 				contentTxt.css('font-size',InitFontSize);
 			});
 
-			//交换数据
-			nextButton.click(function(){
+
+			// 正则解析url携带参数
+			$(document).ready(function(){
+				var s = window.location.href.split('/')
+				var bookId = null;
+				var chaptersId = null;
+				for(x in s){
+					var bookIdTest = new RegExp("^[0-9]+$").test(s[x])
+					if(bookIdTest==true){
+						if(bookId ==null){
+							bookId = parseInt(s[x]);
+							console.log("bookId:"+bookId);
+						}
+						else{
+							chaptersId = parseInt(s[x]);
+							console.log("chaptersId:"+chaptersId);
+						}
+					}
+				}
 				var url = "/ReadingViewAPI/";
-				console.log(0);
-				$.get(url, {"chaptersId": 1, "bookId": 1}, function(data){
+				$.get(url, {"chaptersId": chaptersId, "bookId": bookId}, function(data){  //页面加载时绑定
 					data = $.parseJSON(data);
-					console.log(data.chaptersName);
-					//数据绑定
-					var title = new Vue({	//章节名
-					  el: '#title',
-					  data: {
-					    charpterTitle: data.chaptersName
-					  }
-					})
-					var bookName = new Vue({	//书名
-					  el: '#bookName',
-					  data: {
-					    bookName: data.bookName
-					  }
-					})
-					var bookName = new Vue({	//章节内容
-					  el: '#contentTxt',
-					  data: {
-					    charpterContents: data.chaptersContent
-					  }
-					})
+					//数据处理
+					$('#title').html(data.chaptersName);
+					$('#contentTxt').html(data.chaptersContent);
+				})
+			});
+
+			//数据
+			var id = 0;
+			<!--var url = "/ReadingViewAPI/";-->
+			<!--$.get(url, {"chaptersId": 1, "bookId": 2}, function(data){  //页面加载时绑定-->
+				<!--data = $.parseJSON(data);-->
+				<!--&lt;!&ndash;id = 1;&ndash;&gt;-->
+				<!--//数据处理-->
+				<!--$('#title').html(data.chaptersName);-->
+				<!--&lt;!&ndash;$('#bookName').html(data.chaptersContent);&ndash;&gt;-->
+				<!--&lt;!&ndash;for(var i in data.items)&ndash;&gt;-->
+					<!--&lt;!&ndash;$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');&ndash;&gt;-->
+				<!--$('#contentTxt').html(data.chaptersContent);-->
+			<!--})-->
+			nextButton.click(function(){     //点下一章时绑定
+				if (id == chapters.length - 1) {
+					return
+				}
+				id++;
+				$.get(url, {id,}, function(data){
+					var arrays = new Array();
+					<!--arrays = data.neirong.split("#");-->
+					console.log(arrays);
+					//数据处理
+					$('#title').html(data.chaptersName);
+					$('#bookName').html(data.chaptersContent);
+					for(var i in data.items)
+						$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');
+
 				})
 			})
+
+			nextButton.click(function(){     //点上一章时绑定
+				if (id == 0) {
+					return
+				}
+				id--;
+				$.get(url, {"chatpId": 1, "bookId": 0}, function(data){
+					data = $.parseJSON(data);
+					var arrays = new Array();
+					<!--arrays = data.neirong.split("#");-->
+					console.log(arrays);
+					//数据处理
+					$('#title').html(data.chaptersName);
+					$('#bookName').html(data.chaptersName);
+					<!--for(var i in data.items)-->
+						<!--$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');-->
+					$('#contentTxt').html(data.chaptersContent);
+
+				})
+			})
+
 		</script>
 	</body>
 </html>

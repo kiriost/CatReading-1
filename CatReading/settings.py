@@ -1,3 +1,4 @@
+# **coding=utf-8**
 """
 Django settings for CatReading project.
 
@@ -9,9 +10,9 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
-# coding=utf-8
 
 import os
+import django_crontab
 from .custom_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -33,7 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django_crontab',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -43,6 +44,11 @@ INSTALLED_APPS = [
     # 'utils',
     'rest_framework',
     'books',
+    'admin',
+    'account',
+    'reward',
+    'comment',
+    'statistics',
 
 ]
 
@@ -126,8 +132,16 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+AUTH_USER_MODEL = 'account.User'
+
+IMAGE_UPLOAD_DIR = os.path.join(BASE_DIR, "static/coverImg")
+
+CRONJOBS = [
+    # 每天凌晨1点执行一次
+    ('0 0 1 * * ?', 'statistics.cron.dayDataStatistics'),
+    # 每月1号凌晨1点执行一次
+    ('0 0 1 1 * ?', 'statistics.cron.MonthDataStatistics'),
+]

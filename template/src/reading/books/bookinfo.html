@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=0.36,user-scalable=no,minimal-ui">
+		<meta name="format-detection" content="telephone=no">
+		<link rel="stylesheet" href="/static/src/css/reset.css">
+		<link rel="stylesheet" href="/static/src/css/main.css">
+		<link rel="stylesheet" href="/static/src/css/bookinfo.css">
+		<script src="/static/src/js/lib/vue.min.js"></script>
+		<script src="/static/src/js/lib/zepto.min.js"></script>
+	<title>书籍详情</title>
+	<style type="text/css">
+		.bookConcret{
+			font-size: 45px;
+			border-top: solid 5px #E53935;
+			background: #FFF;
+			border-bottom: solid 5px #EFEFEF;
+		}
+
+		.book-cell h3{
+			font-size: 35px;
+			color: #999;
+		}
+		.book-cell h4{
+			font-size: 50px;
+			color: #000;
+
+		}
+
+		.book-button{
+			position: absolute;
+			top: 575px;
+			right: 100px;
+		}
+		.rankHeader span{
+			width: 50%;
+		}
+		.rank p{
+			padding: 15px 0 15px 15px;
+			font-size: 45px;
+		}
+		.all p{
+			background: url(/static/src/img/icon/vip.png) no-repeat 33px;
+			padding: 20px 0 20px 100px;
+			border-bottom: solid 2px #EFEFEF;
+			font-size: 33px;
+			color: #AAA;
+			font-style: 100;
+		}
+		.pageButton button{
+			background: #FFF;
+			font-size: 45px;
+			border: solid 1px #DDD;
+			width: 240px;
+			height: 100px;
+			border-radius: 5% 5%;
+		}
+		.rightbutton{
+			float: right;
+		}
+		.centerSelect{
+			display: inline;
+			font-size: 45px;
+			border: solid 1px #DDD;
+			width: 40%;
+			height: 100px;
+			line-height: 100px;
+			text-align: center;
+			position: absolute;
+			left: 30%;
+			background: url(/static/src/img/icon/down.png) no-repeat 80% #FFF;
+			float: left;
+		}
+		.centerSelect select{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			font-size: 0;
+		}
+		.centerSelect option{
+			background: #FFF;
+		}
+	</style>
+</head>
+
+<body style="background: #EFEFEF;">
+	<div class="headerFirst">
+		<div class="headerLogo">
+			<img src="" alt="icon">
+		</div>
+		<div class="headNav">
+			<div class="headerNav">
+					<a href="/index/">首页</a>
+					<a href="/library/">书库</a>
+					<a href="/rank/">排行</a>
+					<a href="#">充值</a>
+			</div>
+		</div>
+	</div>
+	<div class="headerRead">
+		<a href="#" class="headerText headerLast">最近阅读  </a>
+		<a href="#" class="headerText headerWarn">提醒</a>
+		<a href="#" class="headerText userName">REHE</a>
+	</div>
+	<div class="middle">
+		<div class="content" id="content">
+			<div class="bookConcret">
+				<ul class="mybook-ul">
+					<li class="book-li">
+						<div  id="booknow">
+							<div class="bookImg">
+								<img v-bind:src="'/static/'+coverurl" alt="我的追书">
+							</div>
+							<div class="book-cell">
+								<h4>[[title]]</h4>
+								<h3>作者：<span>[[author]]</span></h3>
+								<h3>字数：<span>[[wordNumber]]</span>字</h3>
+								<h3>点击：<span>[[clicksNumber]]</span></h3>
+								<h3>书迷：<span>[[chaseBooksNumber]]</span></h3>
+								<h3>状态：<span>[[state? "连载中":"完结"]]</span></h3>
+							</div>
+							<div class="book-button">
+								<button class="startReading">
+										加入追书
+									</button>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="content" id="content">
+			<div class="rank">
+				<div class="rankHeader clearfix" id="click">
+					<span index="0" class="item" v-bind:class="{active : active1}" v-on:click="click1">倒序</span>
+       				<span index="1" class="item" v-bind:class="{active : active2}" v-on:click="click2">正序</span>
+				</div>
+				<p>全部章节</p>
+				<div class="ranklist">
+					<div class="all" id="all">
+						<div v-for="title in titles" v-if="zheng">
+							<a v-bind:href="'/books/'+bookId+'/chapters/'+title.chaptersId"><p>[[title.chaptersName]]</p></a>
+						</div>
+						<div v-for="ntitle in ntitles" v-if="ni">
+							<a v-bind:href="'/books/'+bookId+'/chapters/'+ntitle.chaptersId"><p>第[[ntitle.chaptersId]]章[[ntitle.chaptersName]]</p></a>
+						</div>
+					</div>
+				</div>
+		</div>
+		<div class="content" id="content" style="margin-bottom: 100px;">
+			<div class="pageButton" id="app">
+				<button class="leftbutton" v-on:click="prePage">上一页</button>
+				<div  class="centerSelect">
+					<select onchange="turn(this.value)">
+						<option v-for="chapter in pages" v-bind:value="chapter">[[ chapter ]]</option>
+					</select>
+					<span>[[ now ]] / [[ pages ]]页</span>
+				</div>
+				<button class="rightbutton" v-on:click="nextPage">下一页</button>
+			</div>
+		</div>
+	</div>
+	<script src="/static/src/js/app/books/bookinfo.js">
+	</script>
+</body>
+</html>

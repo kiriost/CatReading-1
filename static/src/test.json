@@ -1,0 +1,13 @@
+{
+	"bookInfo":{
+		"id":1,
+		"coverImg": "/static/watchingBook.png",
+		"bookName": "Test",
+		"wordNumber": 21,
+		"author": "21Days",
+		"clicksNumber": 21,
+		"subscribersNumber": 21,
+		"state": 1
+	},
+	"chaptersNumber": 10
+}

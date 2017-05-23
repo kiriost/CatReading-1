@@ -1,4 +1,4 @@
-# **coding: utf-8**
+# **coding: utf-8**`
 """
     Copyright (c), 2016-2017,  beluga Tech.
     File name： view.py
@@ -9,13 +9,22 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, QueryDict
 from rest_framework.views import APIView
 from .models import BookInfo, BooksContent
-from .serializers import(
-    ChaptersListSerializers, RankListSerializers,
-    FreeCompetitiveSerializers, GroundCompetitiveSerializers,
-    HotRecommendSerializers, NewRecommendSerializers)
+from reward.models import Reward
+from comment.models import Comment
+from .serializers import (
+    CompetitiveListSerializers, RankListSerializers,
+    ShowImgSerializers, BookInfoSerializers,
+    LibrarySerializers, ChaptersSerializers,
+    BookHeadInfoSerializers
+    )
+from reward.serializers import BookInfoRewardSerializers
+from comment.serializers import BookInfoCommentSerializers
+from django.core.paginator import Paginator
+from utils import booktype, shortcuts
+
 
 """
     Author:	         毛毛
@@ -23,24 +32,39 @@ from .serializers import(
     Date:            2017/03/30
     Description:     免费板块的视图渲染应用
 """
+
+
+class ShowImgViewAPI(APIView):
+    def get(self, request):
+        books = BookInfo.objects.all()[:3]
+        showImgSerializers = ShowImgSerializers(books, many=True)
+        showImg = QueryDict(mutable=True)
+        showImg['showImg'] = showImgSerializers.data
+        return HttpResponse(json.dumps(showImg.dict()))
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     免费板块的视图渲染应用
+"""
+
 class FreeCompetitiveViewAPI(APIView):
     def get(self, requset):
-        # book = BookInfo.objects.filter().get()
-        # bookList = BookInfo.objects.filter.all().[1:10]
-        # return HttpResponse("HAHA")
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
-
-    @ csrf_exempt
-    def post(self, requset):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
+        show_img_book = BookInfo.objects.all()[:1].get()
+        competitive_list_book = BookInfo.objects.all()[1:6]
+        competitive_list_book = CompetitiveListSerializers(competitive_list_book, many=True)
+        content = QueryDict(mutable=True)
+        content['id'] = show_img_book.id
+        content['coverImg'] = show_img_book.coverImg.url
+        content['name'] = show_img_book.bookName
+        content['describe'] = show_img_book.describe
+        content['author'] = show_img_book.author
+        content['type'] = booktype.bookType[show_img_book.type]
+        content['bookList'] = competitive_list_book.data
+        free_competitive = QueryDict(mutable=True)
+        free_competitive['freeCompetitive'] = content
+        return HttpResponse(json.dumps(free_competitive))
 
 
 """
@@ -49,21 +73,24 @@ class FreeCompetitiveViewAPI(APIView):
     Date:            2017/03/30
     Description:     精品板块的视图渲染
 """
+
+
 class GroundCompetitiveViewAPI(APIView):
     def get(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
-
-    @csrf_exempt
-    def post(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
+        show_img_book = BookInfo.objects.all()[0:1].get()
+        competitive_list_book = BookInfo.objects.all()[1:6]
+        competitive_list_book = CompetitiveListSerializers(competitive_list_book, many=True)
+        content = QueryDict(mutable=True)
+        content['id'] = show_img_book.id
+        content['coverImg'] = show_img_book.coverImg.url
+        content['name'] = show_img_book.bookName
+        content['describe'] = show_img_book.describe
+        content['author'] = show_img_book.author
+        content['type'] =  booktype.bookType[show_img_book.type]
+        content['bookList'] = competitive_list_book.data
+        ground_competitive = QueryDict(mutable=True)
+        ground_competitive['groundCompetitive'] = content
+        return HttpResponse(json.dumps(ground_competitive))
 
 
 """
@@ -72,21 +99,24 @@ class GroundCompetitiveViewAPI(APIView):
     Date:            2017/03/30
     Description:     热书板块的视图渲染
 """
-class HotRecommendSerializers(APIView):
-    def get(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
 
-    @csrf_exempt
-    def post(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
+
+class HotRecommendViewAPI(APIView):
+    def get(self, request):
+        show_img_book = BookInfo.objects.all()[0:1].get()
+        competitive_list_book = BookInfo.objects.all()[1:6]
+        competitive_list_book = CompetitiveListSerializers(competitive_list_book, many=True)
+        content = QueryDict(mutable=True)
+        content['id'] = show_img_book.id
+        content['coverImg'] = show_img_book.coverImg.url
+        content['name'] = show_img_book.bookName
+        content['describe'] = show_img_book.describe
+        content['author'] = show_img_book.author
+        content['type'] =  booktype.bookType[show_img_book.type]
+        content['bookList'] = competitive_list_book.data
+        free_competitive = QueryDict(mutable=True)
+        free_competitive['hotRecommend'] = content
+        return HttpResponse(json.dumps(free_competitive))
 
 
 """
@@ -95,21 +125,22 @@ class HotRecommendSerializers(APIView):
     Date:            2017/03/30
     Description:     新书板块的视图渲染
 """
-class NewRecommendSerializers(APIView):
-    def get(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
 
-    @csrf_exempt
-    def post(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
+
+class NewRecommendViewAPI(APIView):
+    def get(self, request):
+        showImg = BookInfo.objects.all()[0:4]
+        showBook = BookInfo.objects.all()[4:9]
+        content = QueryDict(mutable=True)
+        showImgSerializers = ShowImgSerializers(showImg, many=True)
+        content['imgList'] = showImgSerializers.data
+        competitiveListSerializers = CompetitiveListSerializers(showBook, many=True)
+        content['bookList'] = competitiveListSerializers.data
+
+        newRecommend = QueryDict(mutable=True)
+        newRecommend['newRecommend'] = content
+        return HttpResponse(json.dumps(newRecommend.dict()))
+
 
 """
     Author:	         毛毛
@@ -117,21 +148,110 @@ class NewRecommendSerializers(APIView):
     Date:            2017/03/30
     Description:     排行榜的视图渲染，
 """
-class  RankListSerializers(APIView):
-    def get(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
 
-    @csrf_exempt
-    def post(self, request):
-        book = BookInfo.objects.all()
-        serializers = FreeCompetitiveSerializers(book, many=True)
-        print serializers.data
-        response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-        return HttpResponse(response)
+
+class RankListViewAPI(APIView):
+    def get(self, request):
+        book = BookInfo.objects.all()[0:10]
+        rankListSerializers = RankListSerializers(book, many=True)
+        rank = QueryDict(mutable=True)
+        rank['listClick'] = rankListSerializers.data
+        rank['listRun'] = rankListSerializers.data
+        rank['listPay'] = rankListSerializers.data
+        return HttpResponse(json.dumps(rank.dict()))
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     详情页头部渲染
+"""
+
+
+class BookInfoHeadViewAPI(APIView):
+    def get(self, request):
+        bookId = request.GET['bookId']
+        book = BookInfo.objects.filter(id=bookId).get()
+        bookHeadInfoSerializers = BookHeadInfoSerializers(book)
+        bookHeadInfo = QueryDict(mutable=True)
+        bookHeadInfo['bookHeadInfo'] = bookHeadInfoSerializers.data
+        bookHeadInfo['chaptersNumber'] = book.chaptersNumber
+
+        return HttpResponse(json.dumps(bookHeadInfo.dict()))
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     详情页
+"""
+
+
+class BookInfoViewAPI(APIView):
+    def get(self, request):
+        bookId = request.GET.get("Id")
+        book = BookInfo.objects.get(id=bookId)
+        serializers = BookInfoSerializers(book)
+        bookInfo = QueryDict(mutable=True)
+        bookInfo['bookInfo'] = serializers.data
+        comments = Comment.objects.filter(bookId=bookId).all()
+        bookInfoCommentSerializers = BookInfoCommentSerializers(comments, many=True)
+        bookInfo['bookComment'] = bookInfoCommentSerializers.data
+        rewards = Reward.objects.filter(bookId=bookId).all()
+        print rewards.count()
+        bookInfoRewardSerializers = BookInfoRewardSerializers(rewards, many=True)
+        bookInfo['bookReward'] = bookInfoRewardSerializers.data
+        print bookInfoRewardSerializers.data
+        return HttpResponse(json.dumps(bookInfo.dict()))
+
+
+"""
+    Author:	         毛毛
+    Version:         0.02v
+    Date:            2017/03/30
+    Description:     详情页尾部渲染
+    request:
+        字段名称     bookId     pagesNumber     isOrder
+        描述        书籍Id      请求条数         顺序
+    response:
+        字段名称       chaptersNumber      chapterId      chaptersName
+        描述    　     章节总数             章节数          章节名
+"""
+
+
+class ChaptersViewAPI(APIView):
+
+    def get(self, request):
+        pagesNumber = request.GET['pagesNumber']
+        bookId = request.GET['bookId']
+        book = BookInfo.objects.get(id=bookId)
+        chapters = BooksContent.objects.filter(BookInfo__id=bookId).all()
+        paginator = Paginator(chapters, 10)
+        serializers = ChaptersSerializers(paginator.page(pagesNumber).object_list, many=True)
+        content = QueryDict(mutable=True)
+        content['bookName'] = book.bookName
+        content['chaptersNumber'] = book.chaptersNumber
+        content['chaptersList'] = serializers.data
+        return HttpResponse(json.dumps(content.dict()))
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     免费板块的视图渲染应用
+"""
+
+
+class LibraryViewAPI(APIView):
+    def get(self, request):
+        bookInfo = BookInfo.objects.filter(id=1).all()
+        serializers = LibrarySerializers(bookInfo, many=True)
+        library = QueryDict(mutable=True)
+        library['books'] = serializers.data
+        return HttpResponse(json.dumps(library.dict()))
 
 
 """
@@ -140,17 +260,54 @@ class  RankListSerializers(APIView):
     Date:            2017/03/30
     Description:     免费榜的视图渲染应用
 """
+
+
 def ReadingViewAPI(request):
 
     if request.method == 'GET':
+        bookId = request.GET['bookId']
         chaptersId = request.GET['chaptersId']
-        print chaptersId
-        print request.GET
-        bookChapter = BooksContent.objects.get(chapters_id=chaptersId)
-        response = JsonResponse({'chaptersName': bookChapter.chapters_name, 'chaptersContent': bookChapter.chapters_content})
+        bookChapter = BooksContent.objects.filter(BookInfo__id=bookId).filter(chaptersId=chaptersId).get()
+        response = JsonResponse({'chaptersName': bookChapter.chaptersName,
+                                 'chaptersContent': bookChapter.chaptersContent})
         return HttpResponse(response)
     else:
         return Http404
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     自动订阅
+"""
+
+
+class subscribersAPIView(APIView):
+
+    def get(self, request):
+        return shortcuts.error_response("请登陆登陆")
+
+    def post(self, request):
+        return shortcuts.success_response("已订阅")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     加入追书
+"""
+
+
+class chaseBooksAPIView(APIView):
+
+    def get(self, request):
+        return shortcuts.error_response("请先登陆")
+
+    def post(self, request):
+        return shortcuts.success_response("已在书架")
+
 
 """
     Author:	         cc
@@ -158,6 +315,8 @@ def ReadingViewAPI(request):
     Date:            2017/03/30
     Description:     首页页面
 """
+
+
 def indexPage(request):
     return render(request, "reading/index.html")
 
@@ -168,8 +327,22 @@ def indexPage(request):
     Date:            2017/03/30
     Description:     阅读页面
 """
-def ReadingPage(request):
-    return render(request, "reading/books/Reading.html")
+
+
+def rankPage(request):
+    return render(request, "reading/books/rank.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     书库页面
+"""
+
+
+def libraryPage(request):
+    return render(request, "reading/books/library.html")
 
 
 """
@@ -178,15 +351,67 @@ def ReadingPage(request):
     Date:            2017/03/30
     Description:     阅读页面
 """
-def LibraryPage(request):
-    return render(request, "reading/books/library.html")
-
-# def Reading(request):
-#     # return render(request, "reading/book/ReadingPage.html")
-#     book = BookInfo.objects.all()
-#     serializers = FreeCompetitiveSerializers(book, many=True)
-#     print serializers.data
-#     response = JsonResponse({"freeCompetitive": json.dumps(serializers.data)})
-#     return HttpResponse(response)
 
 
+def readingPage(request):
+    return render(request, "reading/books/reading.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     阅读页面
+"""
+
+
+def bookInfoPage(request):
+    return render(request, "reading/books/bookinfo.html")
+
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     阅读页面
+"""
+
+
+def bookDetailsPage(request):
+    return render(request, "reading/books/bookDetails.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     阅读页面
+"""
+
+
+def cataloguePage(request):
+    return render(request, "reading/books/catalogue.html")
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     书籍评论页面
+"""
+
+
+def bookCommentPage(request):
+    return render(request, "reading/books/comment.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     书籍打赏页面
+"""
+
+
+def bookRewardPage(request):
+    return render(request, "reading/books/reward.html")

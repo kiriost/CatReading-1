@@ -139,16 +139,16 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
     padding-left: 104px;
 }
 .titleHot{
-	background: url(../img/icon/hot.jpg) no-repeat 33px;
+	background: url(/static/src/img/icon/hot.jpg) no-repeat 33px;
 }
 .titleFree{
-	background: url(../img/icon/free.jpg) no-repeat 33px;
+	background: url(/static/src/img/icon/free.jpg) no-repeat 33px;
 }
 .titleTop{
-	background: url(../img/icon/top.jpg) no-repeat 33px;
+	background: url(/static/src/img/icon/top.jpg) no-repeat 33px;
 }
 .titleNew{
-	background: url(../img/icon/new.jpg) no-repeat 33px;
+	background: url(/static/src/img/icon/new.jpg) no-repeat 33px;
 }
 .module-header-r{
 	position: absolute;
@@ -158,7 +158,7 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 	display: block;
 	width: 130px;
 	height: 130px;
-	background: url(../img/icon/jiantou.jpg) no-repeat center;
+	background: url(/static/src/img/icon/jiantou.jpg) no-repeat center;
 }
 .book-ul{
 	padding: 34px;
@@ -211,7 +211,7 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 	margin-top: 0.5rem;
 }
 .book-author{
-	background: url(../img/icon/writter.jpg) no-repeat left center;
+	background: url(/static/src/img/icon/writter.jpg) no-repeat left center;
 	padding-left: 46px;
 	color: #969BA3;
 }
@@ -245,6 +245,7 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 	color: #636563;
 
 }
+
 .heighlight a{ 
 	color: #2992CE;
 }
@@ -319,7 +320,6 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
     white-space: nowrap;
     overflow: hidden;
 }
-<<<<<<< HEAD
 .list li:nth-child(10){
 	border-bottom: none;
 }
@@ -328,10 +328,6 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 	color: #636563;
 	width: 100%;
 	height: 100%;
-=======
-.list a{
-	color: #636563;
->>>>>>> b6ef491c76804a8f6c095f69a01ed5df03cd17d0
 }
 .count{
 	height: 62px;
@@ -345,11 +341,11 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 	text-align: center;
 	margin-right: 34px;
 }
-.t span.count{
+.list .t{
 	background: #E99A00;
 	color: #FFF;
 }
-/*底部*/
+
 .footer{
 	height: 567px;
 	background-color: #333;
