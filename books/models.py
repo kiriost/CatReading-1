@@ -89,7 +89,7 @@ class BookInfo(models.Model):
     # 顶部书籍推荐
     headImgBook = models.IntegerField("顶部书籍推荐排行位数", default=0)
     # 推荐语
-    testimonials = models.CharField("推荐语", max_length=20)
+    testimonials = models.CharField("推荐语", max_length=20, default="")
 
     def add_clicks_number(self):
         self.clicksNumber += 1

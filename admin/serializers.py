@@ -12,14 +12,22 @@ from utils import booktype
 
 
 class BookListSerializers(serializers.ModelSerializer):
+
+    STATE_CHOICE = {0: "更新中", 1: "已完结"}
+
     type = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
 
     class Meta:
         model = BookInfo
-        fields = ('bookName', 'id', 'coverImg', 'author', 'subscribersNumber', 'chaptersNumber', 'type', 'state')
+        fields = ('bookName', 'id', 'coverImg', 'author', 'subscribersNumber', 'chaptersNumber', 'type', 'state', 'testimonials',
+                  'hotBook', 'freeBook', 'rankBook', 'newBook', 'headImgBook')
 
     def get_type(self, obj):
         return booktype.bookType[obj.type]
+
+    def get_state(self, obj):
+        return self.STATE_CHOICE[obj.state]
 
 class CreateChapterSerializers(serializers.Serializer):
 
@@ -36,7 +44,7 @@ class ChaptersListSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = BooksContent
-        fields = ('id', 'chaptersName', 'updateTime', 'chaptersPV', 'wordNumber', 'chaptersType')
+        fields = ('chaptersId', 'chaptersName', 'updateTime', 'chaptersPV', 'wordNumber', 'chaptersType')
 
     def get_updateTime(self, obj):
         return obj.updateTime.strftime("%Y-%m-%d")
@@ -46,14 +54,14 @@ class ShowBookInfoSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = BookInfo
-        fields = ('bookName', 'coverImg', 'author', 'chaseBooksNumber', 'wordNumber', 'state', 'type', 'describe')
+        fields = ('bookName', 'coverImg', 'author', 'chaseBooksNumber', 'wordNumber', 'state', 'type', 'describe', 'testimonials')
 
 
 class EditBookInfoSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = BookInfo
-        fields = ('id', 'bookName', 'author', 'state', 'type', 'describe')
+        fields = ('id', 'bookName', 'author', 'state', 'type', 'describe', 'testimonials')
 
 
 class EditChapterListSerializers(serializers.ModelSerializer):

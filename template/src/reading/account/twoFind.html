@@ -12,32 +12,50 @@
 		<div class="header">
 			<a href="#" class="headerLeft"><img src="/static/src/img/icon/loginArrow.jpg" onclick="javascript:history.back(-1)";></a>
 			<a href="#" class="headerMiddle">手机找回密码</a>
-			<a href="login.html" class="headerRight">登陆</a>
+			<a href="/login/" class="headerRight">登陆</a>
 		</div>
 		<div class="middle">
 			<div class="content" id="content">
-				<div class="para reg-plan-div">
-			        <div class="reg-plan-map">
-			            <i class="i0 active">•</i>
-			            <span class="sp0 active"></span>
-			            <i class="i1 active">•</i>
-			            <span class="sp1"></span>
-			            <i class="i2">•</i>
-			        </div>
-			        <div class="reg-plan-text">
-			            <span class="spt0 active">填写手机号</span>
-			            <span class="spt1 active">发送短信码</span>
-			            <span class="spt2">设置新密码</span>
-			        </div>
-			    </div>
-	
+				<div class="para reg-plan-div">  <!-- 复制这一块儿，不同页面添加active-->
+					<div class="reg-plan-map">
+						<i class="i0 active">•</i>
+						<span class="sp0 active"></span>
+						<i class="i1 active">•</i>
+						<span class="sp1"></span>
+						<i class="i2">•</i>
+						<span class="sp2"></span>
+					</div>
+					<div class="reg-plan-text">
+						<span class="spt0 active">填写手机号</span>
+						<span class="spt1">设置新密码</span>
+						<span class="spt2">找回成功</span>
+					</div>
+				</div>
+
+				<div class="userLogin">
+					<form class="search" autocomplete="off" style="margin-top:20px" onsubmit="return checksubmit()">
+						<div class="bkPassword">
+							<input type="password" name="password" class="accountPassword beganLogin" id="newPassword" placeholder='输入新密码'/>
+						</div>
+						<div class="bkPassword">
+							<input type="password" name="password" class="accountPassword beganLogin" id="confirmPassword" placeholder='确认新密码'/>
+						</div>
+						<div style="height: 42px;">
+							<p id="codeFalse" style="font-size: 42px; color: #E53935; display: none;">新密码要求大于六位小于十六位</p>
+							<p id="codeNo" style="font-size: 42px; color: #E53935; display: none;" about="">两次输入不一致</p>
+						</div>
+					</form>
+				</div>
+
 				<div class="userLogin">
 					<form class="search" autocomplete="off" style="margin-top:20px">
 						<div class="bkAgree">
-							<input type="text" name="passord" id="token" class="accountPassword messageInput" placeholder='请输入验证码'/>
-							<span class="agreeNumber" style="display: none;" id="timeRecord"><span id="timing"></span>秒后重新获取</span>
-							<span class="agreeNumber" style="background-color: #E53935; font-size:42px; color: #FFF; display:inline-block;" id="getIdn">获取验证码</span>
-						</div> 
+							<input type="text" name="checkNumber" class="accountPassword messageInput" placeholder='请输入验证码' id="checkNumber"/>
+							<input class="agreeNumber" style="background-color: #E53935; color: #FFF	" type="button" id="check-SMS" value="获取验证码" onclick="settime()" />
+						</div>
+						<div style="color: #E53935;font-size: 42px; padding-top: 25px;">
+							<span id="error-info"></span>
+						</div>
 						<input type="submit" value="下一步" class="loginButton" />	
 						</div>
 					</form>
@@ -50,51 +68,78 @@
 	<script src="/static/src/js/lib/zepto.min.js"></script>
 	<script src="/static/src/js/util/csrfTokenHeader.js"></script>
 	<script>
-		//倒计时功能
-		var time = $('#timing');
-		var getIdn = $('#getIdn');
-		var timeRecord = $('#timeRecord');
-		var i;
-		var num = 60;
-		function startCount(){
-		  time.html(num);
-		  num=num-1;
-		  i=setTimeout("startCount()",1000);
-		  if(num<0){
-		  	clearTimeout(i);
-		  	getIdn.css('display','inline-block');
-		  	timeRecord.hide();
-		  	num = 60;
-		  }
+	var countdown = 5;
+	var state = 0;
+	function settime() {
+		var checkSMS = $("#check-SMS");
+		if (1 == state){
+			console.log("ok");
 		}
-		getIdn.click(function(){
-			//点击获取验证码时调用发送短信的接口
-			getIdn.hide();
-			timeRecord.css('display','inline-block');
-			startCount();
-		})
+		if (countdown == 0) {
+			state = 1;
+			document.getElementById("check-SMS").disabled=false;
+			checkSMS.attr('value', '获取验证码');
+			countdown = 5;
+			return;
+		} else {
+			state = 0;
+			document.getElementById("check-SMS").disabled=true;
+			checkSMS.attr('value', "重新发送(" + countdown + ")");
+			countdown--;
+		}
+		setTimeout(function() {
+			settime() }
+			,1000)
+	}
+
+	var newPassword = $('#newPassword').val();
+	var confirmPassword = $('#confirmPassword').val();
+	//console.log(newPassword.length);
+	function checksubmit(){
+		if(newPassword==confirmPassword && newPassword.length >= 8 && newPassword.length <= 16){
+			return true;
+		}
+		if(newPassword.length<8||newPassword.length>16){
+			$('#codeFalse').show();
+			$('#codeNo').hide();
+			return false;
+		}else{
+			$('#codeNo').show();
+			$('#codeFalse').hide();
+			return false;
+		}
+	}
+
+
+	$(document).ready(function($) {
+		 settime();
+	});
 
 	$("form").on("submit", function(){
-		var token = $("#token").val();
+		if(checksubmit()){
+			var token = $("#token").val();
 
-		$.ajax({
-			beforeSend: csrfTokenHeader,
-			url: "/CheckTokenAPIView/",
-			async: false,
-			data: {token: token},
-			dataType: "json",
-			type: "GET",
-			success: function (data) {
-				console.log(data.code);
-				if(!data.code) {
-					console.log(data.data)
-					window.location.href = "/threeFind/";
+			$.ajax({
+				beforeSend: csrfTokenHeader,
+				url: "/ChangePasswordAPIView",
+				async: false,
+				data: {token: token, password: newPassword},
+				dataType: "json",
+				type: "POST",
+				success: function (data) {
+					if(!data.code) {
+						console.log(data.data)
+						window.location.href = "/threeFind/";
+					}else{
+						$("#error-info").empty();
+						$("#error-info").append(data.data);
+					}
+				},
+				error: function (){
+					alert("错误");
 				}
-			},
-			error: function (){
-				alert("错误");
-			}
-		});
+			});
+		}
 		return false;
 	});
 	</script>

@@ -32,7 +32,6 @@
 				</div>
 				{% else %}
 				<div class="headerLogin" id="headerLogin">
-					<a class="loginText">{{ request.user.userName }}</a>
 					<a href="/center/"><img src="/static/src/img/icon/writter.jpg"></a>
 				</div>
 				{% endif %}
@@ -61,9 +60,9 @@
 							<div class="module-header-l">
 								<h3 class="module-title titleHot">热门推荐</h3>
 							</div>
-							<div class="module-header-r">
-								<a href="#"></a>
-							</div>
+							<!--<div class="module-header-r">-->
+								<!--<a href="#"></a>-->
+							<!--</div>-->
 						</div>
 
 						<ul class="book-ul">
@@ -88,7 +87,7 @@
 							</li>
 							<li class="book-list"  v-for="hot in hots.bookList">
 								<a v-bind:href="'/books/'+hot.type"><span v-text=" '[' + hot.type + ']' "></span></a>
-								<a v-bind:href="'/books/'+hot.id"> [[ hot.bookName ]] </a>
+								<a v-bind:href="'/books/'+hot.id"> [[hot.testimonials]][[ hot.bookName ]] </a>
 							</li>
 						</ul>
 					</div>
@@ -102,9 +101,9 @@
 							<div class="module-header-l">
 								<h3 class="module-title titleFree">免费精品</h3>
 							</div>
-							<div class="module-header-r">
-								<a href="#"></a>
-							</div>
+							<!--<div class="module-header-r">-->
+								<!--<a href="#"></a>-->
+							<!--</div>-->
 						</div>`
 
 						<ul class="book-ul">
@@ -128,8 +127,8 @@
 								</a>
 							</li>
 							<li class="book-list"  v-for="free in frees.bookList">
-								<a v-bind:href="free.type"><span v-text=" '[' + free.type + ']' "></span></a>
-								<a v-bind:href="'/books/'+free.id"> [[ free.bookName ]] </a>
+								<span v-text=" '[' + free.type + ']' "></span>
+								<a v-bind:href="'/books/'+free.id">  [[free.testimonials]][[ free.bookName ]] </a>
 							</li>
 						</ul>
 					</div>
@@ -140,13 +139,13 @@
 							<div class="module-header-l">
 								<h3 class="module-title titleTop">上架精品</h3>
 							</div>
-							<div class="module-header-r">
-								<a href="#"></a>
-							</div>
+							<!--<div class="module-header-r">-->
+								<!--<a href="#"></a>-->
+							<!--</div>-->
 						</div>
 						<ul class="book-ul">
 							<li class="book-li">
-								<a v-bind:href="grounds.id">
+								<a v-bind:href="'/books/'+grounds.id">
 									<div class="bookImg">
 										<img v-bind:src="'/static/coverImg/'+grounds.coverImg" v-bind:alt="grounds.name">
 									</div>
@@ -165,8 +164,8 @@
 								</a>
 							</li>
 							<li class="book-list"  v-for="ground in grounds.bookList">
-								<a v-bind:href="ground.type"><span v-text=" '[' + ground.type + ']' "></span></a>
-								<a v-bind:href="'/books/'+ground.id"> [[ ground.bookName ]] </a>
+								<span v-text=" '[' + ground.type + ']' "></span>
+								<a v-bind:href="'/books/'+ground.id">  [[ground.testimonials]][[ ground.bookName ]] </a>
 							</li>
 						</ul>
 					</div>
@@ -186,14 +185,14 @@
 						</div>
 						<ul class="book-ul">
 							<li class="bookNew clearfix">
-								<a v-bind:href="news.id" v-for="news in news.imgList">
+								<a v-bind:href="'/books/'+news.id" v-for="news in news.imgList">
 									<img v-bind:src="'/static/coverImg/'+news.coverImg">
 									<p> [[ news.bookName ]] </p>
 								</a>
 							</li>
 							<li class="book-list" v-for="news in news.bookList">
-								<a v-bind:href="news.type"><span v-text=" '[' + news.type + ']' "></span></a>
-								<a v-bind:href="news.id"> [[ news.bookName ]] </a>
+								<span v-text=" '[' + news.type + ']' "></span>
+								<a v-bind:href="'/books/'+news.id"> [[ news.bookName ]] </a>
 							</li>
 						</ul>
 					</div>

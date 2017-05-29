@@ -16,18 +16,22 @@
 		</div>
 		<div class="middle">
 			<div class="content" id="content">
-				<div class="para reg-plan-div">
+				<div class="para reg-plan-div"> <!--  复制这只这一块儿 -->
 			        <div class="reg-plan-map">
 			            <i class="i0 active">•</i>
 			            <span class="sp0 active"></span>
 			            <i class="i1 active">•</i>
 			            <span class="sp1 active"></span>
 			            <i class="i2 active">•</i>
+			            <span class="sp2 active"></span>
+			            <i class="i3">•</i>
+			            <span class="sp2"></span>
 			        </div>
 			        <div class="reg-plan-text">
 			            <span class="spt0 active">填写手机号</span>
 			            <span class="spt1 active">发送短信码</span>
 			            <span class="spt2 active">设置新密码</span>
+			            <span class="spt3">找回成功</span>
 			        </div>
 			    </div>
 	
@@ -57,9 +61,9 @@
 		var newPassword = $('#newPassword');
 		var confirmPassword = $('#confirmPassword');
 		function checksubmit(){
-			if(newPassword.val()==confirmPassword.val()&&newPassword.val().length>6){
+			if(newPassword.val()==confirmPassword.val() && newPassword.val().length >= 8 && newPassword.val().length <= 16){
 				return true;
-			}else if(newPassword.val().length<=6||newPassword.val().length>=16){
+			}else if(newPassword.val().length<8||newPassword.val().length>16){
 				$('#codeFalse').show();
 				$('#codeNo').hide();
 				return false;

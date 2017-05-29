@@ -24,6 +24,7 @@ from reward.serializers import BookInfoRewardSerializers
 from comment.serializers import BookInfoCommentSerializers
 from django.core.paginator import Paginator
 from utils import booktype, shortcuts
+from datetime import datetime, timedelta
 
 
 """
@@ -57,7 +58,7 @@ class FreeCompetitiveViewAPI(APIView):
         content = QueryDict(mutable=True)
         content['id'] = show_img_book.id
         content['coverImg'] = show_img_book.coverImg.url
-        content['name'] = show_img_book.bookName
+        content['bookName'] = show_img_book.bookName
         content['describe'] = show_img_book.describe
         content['author'] = show_img_book.author
         content['type'] = booktype.bookType[show_img_book.type]
@@ -83,10 +84,10 @@ class GroundCompetitiveViewAPI(APIView):
         content = QueryDict(mutable=True)
         content['id'] = show_img_book.id
         content['coverImg'] = show_img_book.coverImg.url
-        content['name'] = show_img_book.bookName
+        content['bookName'] = show_img_book.bookName
         content['describe'] = show_img_book.describe
         content['author'] = show_img_book.author
-        content['type'] =  booktype.bookType[show_img_book.type]
+        content['type'] = booktype.bookType[show_img_book.type]
         content['bookList'] = competitive_list_book.data
         ground_competitive = QueryDict(mutable=True)
         ground_competitive['groundCompetitive'] = content
@@ -109,7 +110,7 @@ class HotRecommendViewAPI(APIView):
         content = QueryDict(mutable=True)
         content['id'] = show_img_book.id
         content['coverImg'] = show_img_book.coverImg.url
-        content['name'] = show_img_book.bookName
+        content['bookName'] = show_img_book.bookName
         content['describe'] = show_img_book.describe
         content['author'] = show_img_book.author
         content['type'] =  booktype.bookType[show_img_book.type]
@@ -196,10 +197,10 @@ class BookInfoViewAPI(APIView):
         serializers = BookInfoSerializers(book)
         bookInfo = QueryDict(mutable=True)
         bookInfo['bookInfo'] = serializers.data
-        comments = Comment.objects.filter(bookId=bookId).all()
+        comments = Comment.objects.filter(bookId=bookId).all()[0:3]
         bookInfoCommentSerializers = BookInfoCommentSerializers(comments, many=True)
         bookInfo['bookComment'] = bookInfoCommentSerializers.data
-        rewards = Reward.objects.filter(bookId=bookId).all()
+        rewards = Reward.objects.filter(bookId=bookId).all()[0:3]
         print rewards.count()
         bookInfoRewardSerializers = BookInfoRewardSerializers(rewards, many=True)
         bookInfo['bookReward'] = bookInfoRewardSerializers.data
@@ -224,34 +225,129 @@ class BookInfoViewAPI(APIView):
 class ChaptersViewAPI(APIView):
 
     def get(self, request):
-        pagesNumber = request.GET['pagesNumber']
+        numPage = request.GET['numPage']
         bookId = request.GET['bookId']
+        isOrder = request.GET['isOrder']
+
+        chapters = ""
+
+        if "true" == isOrder:
+            chapters = BooksContent.objects.filter(BookInfo__id=bookId).all()
+        elif "false == isOrder":
+            chapters = BooksContent.objects.filter(BookInfo__id=bookId).order_by('-chaptersId').all()
         book = BookInfo.objects.get(id=bookId)
-        chapters = BooksContent.objects.filter(BookInfo__id=bookId).all()
-        paginator = Paginator(chapters, 10)
-        serializers = ChaptersSerializers(paginator.page(pagesNumber).object_list, many=True)
+        # chapters = BooksContent.objects.filter(BookInfo__id=bookId).all()
+        paginator = Paginator(chapters, 5)
+        serializers = ChaptersSerializers(paginator.page(numPage).object_list, many=True)
         content = QueryDict(mutable=True)
         content['bookName'] = book.bookName
-        content['chaptersNumber'] = book.chaptersNumber
         content['chaptersList'] = serializers.data
+        content['pageNumber'] = paginator.num_pages
         return HttpResponse(json.dumps(content.dict()))
 
 
-"""
-    Author:	         毛毛
-    Version:         0.01v
-    Date:            2017/03/30
-    Description:     免费板块的视图渲染应用
-"""
+    """
+
+        Author:             毛毛
+
+        Version:         0.01v
+
+        Date:            2017/05/29
+
+        Description:     书库
+
+        request: type, wordNumbers, bookHot, updateTime, state, bookMoney, pagesNumber
+
+    """
 
 
-class LibraryViewAPI(APIView):
+
+class LibraryAPIView(APIView):
+
     def get(self, request):
-        bookInfo = BookInfo.objects.filter(id=1).all()
-        serializers = LibrarySerializers(bookInfo, many=True)
+
+        Type = int(request.GET['type'])
+
+        wordNumbers = int(request.GET['wordNumber'])
+
+        updateTime = int(request.GET['updateTime'])
+
+        state = int(request.GET['state'])
+
+        bookMoney = int(request.GET['bookMoney'])
+
+        pagesNumber = request.GET['pagesNumber']
+
+        clicksNumber = request.GET['bookHot']
+
+        books = BookInfo.objects.filter(id=4).all()
+
+        endTime = datetime.now()
+
+        if Type is not 0:
+
+            books = books.filter(type=Type)
+
+        if wordNumbers is not 0:
+
+            if wordNumbers is 1:
+
+                books = books.filter(wordNumber__lt=300000)
+
+            elif wordNumbers is 2:
+
+                books = books.filter(wordNumber__range=(300000, 500000))
+
+            elif wordNumbers is 3:
+
+                books = books.filter(wordNumber__range=(500000, 1000000))
+
+            else:
+
+                books = books.filter(wordNumber__gt=1000000)
+
+        if updateTime is not 0:
+
+            if updateTime is 1:
+
+                startTime = (endTime - timedelta(days=3))
+
+                books = books.filter(updateTime__range=(startTime, endTime))
+
+            elif updateTime is 2:
+
+                startTime = (endTime - timedelta(days=7))
+
+                books = books.filter(updateTime__range=(startTime, endTime))
+
+            else:
+
+                startTime = (endTime - timedelta(days=30))
+
+                books = books.filter(updateTime__range=(startTime, endTime))
+
+        if state is not 0:
+
+            books = books.filter(state=state-1)
+
+        if bookMoney is not 0:
+
+            books = books.filter(bookMoney=bookMoney-1)
+
+        paginator = Paginator(books, 10)
+
+        serializers = LibrarySerializers(paginator.page(pagesNumber).object_list, many=True)
+
         library = QueryDict(mutable=True)
-        library['books'] = serializers.data
+
+        library['list'] = serializers.data
+
+        library['yeshuNumber'] = books.count()
+
         return HttpResponse(json.dumps(library.dict()))
+
+
+
 
 
 """

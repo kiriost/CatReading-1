@@ -20,7 +20,7 @@
         </div>
         <div class="headNav">
             <div class="headerNav">
-                <a href="/">首页</a>
+                <a href="/index/">首页</a>
                 <a href="/library/">书库</a>
                 <a href="/rank/">排行</a>
                 <a href="#">充值</a>
@@ -110,8 +110,8 @@
                 <div class="line"></div>
                 <div id="chapter">
                     <div class="chapter" v-for="item in items">
-                        <p class="chaptername">[[item.bookName]]</p>=
-                        <p class="chaptertitle">最新：第[[item.chapterId]]章 [[item.chapterTitle]]<span>([[item.updateTime]])</span></p>
+                        <p class="chaptername">[[item.bookName]]</p>
+                        <p class="chaptertitle">最新：第[[item.chaptersNumber]]章 [[item.chaptersName]]<span>([[item.updateTime]])</span></p>
                         <p class="chapterinfo">作者：[[item.author]] 字数：<span>[[item.wordNumber]]</span></p>
                     </div>
                 </div>
@@ -141,17 +141,22 @@
     <script src="/static/src/js/lib/zepto.min.js"></script>
     <script type="text/javascript">
     var v = new Vue({
-        delimiters: ['[[', ']]'],
-        el: "#chapter",
+        delimiters: ['[[', ']]'], el: "#chapter",
         data: {
-            items: []
+            items: [{
+                bookName: "我当领班那些年",
+                chaptersNumber: 72,
+                chaptersName: "逃出别墅",
+                updateTime: "03-12 21:24",
+                author: "纯洁小伙子",
+                wordNumber: 167812
+            }]
         }
     })
 
 
     var f = new Vue({
-        delimiters: ['[[', ']]'],
-         el: "#footer",
+        delimiters: ['[[', ']]'], el: "#footer",
         data: {
             pagesNumber: 1,
             yeshuNumber: 10
@@ -212,7 +217,7 @@
         })
     }
     time[0].checked = true;
-    bookTime = 0;
+    var bookTime = 0;
 
     var free = new Array();
     for (var i = 0; i < 3; i++) {
@@ -226,7 +231,7 @@
         })
     }
     free[0].checked = true;
-    bookFree = 0;
+    var bookFree = 0;
 
     var finish = new Array();
     for (var i = 0; i < 3; i++) {
@@ -240,20 +245,21 @@
         })
     }
     finish[0].checked = true;
-    bookFinish = 0;
+    var bookFinish = 0;
 
     function reqestMore() {
-        $.get("/LibraryViewAPI/", {
-            type: bookKind,
-            wordNumbers: bookWord,
-            bookHot: bookHot,
-            updateTime: bookTime,
-            state: bookFinish,
-            bookMoney: bookFree,
-            pagesNumber: f.pagesNumber
+        $.get("/LibraryViewAPI/",
+        {
+            "type": bookKind,
+            "wordNumber": bookWord,
+            "bookHot": bookHot,
+            "updateTime": bookTime,
+            "state": bookFinish,
+            "bookMoney": bookFree,
+            "pagesNumber": f.pagesNumber
         }, function(data) {
             data = $.parseJSON(data);
-            v.items = data.books;
+            v.items = data.list;
             f.yeshuNumber = data.yeshuNumber;
         })
     }

@@ -16,19 +16,25 @@
 							.<!-- 网站logo -->
 					</div>
 					<div class="headerNav">
-						<a href="#">首页</a>
-						<a href="#">书库</a>
-						<a href="#">排行</a>
+						<a href="/">首页</a>
+						<a href="/library/">书库</a>
+						<a href="/rank/">排行</a>
 						<a href="#">充值</a>
 					</div>
 				</div>
+				{% if not request.user.is_authenticated %}
 				<div class="headerLogin" id="headerLogin">
-					<a href="#" class="loginText">登陆</a>
+					<a href="/login/" class="loginText">登陆</a>
 					<a href="#"><img src="/static/src/img/icon/wechat.jpg"></a>
 					<a href="#"><img src="/static/src/img/icon/qq.jpg"></a>
 					<a href="#"><img src="/static/src/img/icon/baidu.jpg"></a>
 					<a href="#"><img src="/static/src/img/icon/weibo.jpg"></a>
 				</div>
+				{% else %}
+				<div class="headerLogin" id="headerLogin">
+					<a href="/center/"><img src="/static/src/img/icon/writter.jpg"></a>
+				</div>
+				{% endif %}
 			</div>
 			<!-- header结束 -->
 			<div class="middle">
@@ -38,8 +44,8 @@
 				</div>
 					<div class="catalogue">
 						<div class="ctgHeader">
-							<span href="#" class="ctgPositive ctg ctgActive" id="positive">正序</span>
-							<span href="#" class="ctgInverted ctg" id="inverted">倒序</span>
+							<span id="correctOrder" class="ctgPositive ctg ctgActive" v-on:click="turnOrder('true')">正序</span>
+							<span id="invertedOrder" class="ctgInverted ctg" v-on:click="turnOrder('false')">倒序</span>
 						</div>
 						<ul class="showCharpter" id="showCharpter">
 							<li v-bind:class="{payCharpter: chapterList.chaptersType === 1}" v-for="chapterList in chapterLists">
@@ -50,15 +56,15 @@
 
 					</div>
 					<div class= "ctgChoose">
-						<span class="ctgPre ctgBut" id="ctgPre">上一页</span>
+						<span class="ctgPre ctgBut"  v-on:click="turnPage(numPage-1)">上一页</span>
 						<span class="ctgMore ctgBut" id="ctgMore">
-							[[ pagesNumber ]] / [[ yeshuNumber ]]页
+							[[ numPage ]] / [[ pageNumber ]]页
 							<img src="/static/src/img/icon/caShow.jpg">
-							<select class="ctgSelect" name="items">
-								<option v-for="i in yeshuNumber" class="option">[[ i ]]</option>
+							<select id="selectNumPage" class="ctgSelect" name="items">
+								<option v-for="i in pageNumber" class="option">[[ i ]]</option>
 							</select>
 						</span>
-						<span class="ctgNext ctgBut" id="ctgNext">下一页</span>
+						<span class="ctgNext ctgBut" v-on:click="turnPage(numPage+1)">下一页</span>
 					</div>
 				</div>
 				<!-- content结束 -->
@@ -79,134 +85,259 @@
 	<script src="/static/src/js/lib/zepto.min.js"></script>
 	<script src="/static/src/js/lib/vue.min.js"></script>
 	<script>
-		var showCharpter = $('#showCharpter');
-		//页面加载时请求一次数据，需要切割url（测试阶段暂未切割）
-		var pre = $('#ctgPre');
-		var next = $('#ctgNext');
-		var positive = $('#positive');
-		var inverted = $('#inverted');
-		var option = $('.option');
-		var url = "/ChaptersViewAPI/";
-		var pagesNumber = 1;	//pagesNumber默认为1
-		var bookId = 1;			//bookId初始化，有效Id应切出
-		var maxPage = 0;		//初始化最大页数为0
+	<!--<script>-->
+	    <!--function getBookId(){-->
+            <!--var url=window.location.href;-->
+            <!--var s=url.split('/');-->
+            <!--var bookId;-->
+            <!--for (x in s){-->
+            <!--var bookIdTest = new RegExp("^[0-9]+$").test(s[x]);-->
+                <!--if (bookIdTest==true){-->
+                    <!--bookId=parseInt(s[x]);-->
+                    <!--return bookId;-->
+                <!--}-->
+            <!--}-->
+        <!--}-->
+
+		<!--var showCharpter = $('#showCharpter');-->
+		<!--//页面加载时请求一次数据，需要切割url（测试阶段暂未切割）-->
+		<!--var pre = $('#ctgPre');-->
+		<!--var next = $('#ctgNext');-->
+		<!--var positive = $('#positive');-->
+		<!--var inverted = $('#inverted');-->
+		<!--var option = $('.option');-->
+		<!--var url = "/ChaptersViewAPI/";-->
+		<!--var pagesNumber = 1;	//pagesNumber默认为1-->
+		<!--var bookId = getBookId();			//bookId初始化，有效Id应切出-->
+		<!--var maxPage = 0;		//初始化最大页数为0-->
+
+		<!--function showCharpters(data){		//绑定章节列表数据和总页数的函数-->
+			<!--var showCharpters = new Vue({	//章节列表绑定-->
+				<!--el: "#showCharpter",-->
+				<!--delimiters: ['[[', ']]'],-->
+				<!--data: {-->
+					<!--chapterLists: data.chaptersList,-->
+					<!--bookId: bookId  //此处的bookId来自解析本页面url-->
+				<!--}-->
+			<!--})-->
+			<!--var ctgMore = new Vue({			//总页数和当前页数绑定-->
+				<!--el: "#ctgMore",-->
+				<!--delimiters: ['[[', ']]'],-->
+				<!--data: {-->
+					<!--pagesNumber: pagesNumber,-->
+					<!--yeshuNumber: Math.ceil(data.chaptersNumber/10)-->
+				<!--}-->
+			<!--})-->
+			<!--var navRoute = new Vue({			//书名绑定-->
+				<!--el: "#navRoute",-->
+				<!--delimiters: ['[[', ']]'],-->
+				<!--data: {-->
+					<!--bookName: data.bookName,-->
+					<!--bookId: bookId  //此处的bookId来自解析本页面url-->
+				<!--}-->
+			<!--})-->
+		<!--}-->
 
 
-		//页面加载时的请求
+		<!--//页面加载时的请求-->
+		<!--$.get(url,-->
+		<!--{-->
+		    <!--"bookId": bookId,-->
+		    <!--"pagesNumber": 1,-->
+		    <!--"isOrder": true-->
+		<!--},-->
+		<!--function(data){-->
+			<!--data = $.parseJSON(data);-->
+			<!--maxPage = Math.ceil(data.chaptersNumber/10);-->
+			<!--showCharpters(data);-->
+		<!--})-->
+
+		<!--//点击上一页时的请求-->
+		<!--pre.click(function(){-->
+			<!--console.log('pre');-->
+			<!--if(pagesNumber > 1){-->
+				<!--pagesNumber&#45;&#45;;-->
+				<!--$.get(url,-->
+				<!--{-->
+				    <!--"bookId": bookId,-->
+				    <!--"pagesNumber": 1,-->
+				    <!--"isOrder": true-->
+				<!--},-->
+				<!--function(data){-->
+					<!--showCharpters(data);-->
+				<!--})-->
+			<!--}-->
+		<!--})-->
+
+		<!--//点击下一页时的请求-->
+		<!--next.click(function(){-->
+			<!--console.log('1');-->
+			<!--if(pagesNumber < maxPage){-->
+				<!--++pagesNumber;-->
+				<!--$.get(url,-->
+				<!--{-->
+				    <!--"bookId": bookId,-->
+				    <!--"pagesNumber": 1,-->
+				    <!--"isOrder": true-->
+				<!--},-->
+				<!--function(data){-->
+					<!--showCharpters(data);-->
+				<!--})-->
+			<!--}-->
+		<!--})-->
+
+		<!--//点击倒序时的请求-->
+		<!--inverted.click(function(){-->
+			<!--inverted.addClass("ctgActive").siblings().removeClass("ctgActive");-->
+			<!--pagesNumber = 1;-->
+			<!--$.get(url,-->
+			<!--{-->
+			    <!--"bookId": bookId,-->
+			    <!--"pagesNumber": 1,-->
+			    <!--"isOrder": false-->
+			<!--},-->
+			<!--function(data){-->
+				<!--data = $.parseJSON(data);-->
+				<!--console.log(data.chaptersList);-->
+				<!--showCharpters(data);-->
+			<!--})-->
+		<!--})-->
+
+		<!--//点击正序时的请求-->
+		<!--positive.click(function(){-->
+			<!--positive.addClass("ctgActive").siblings().removeClass("ctgActive");-->
+			<!--pagesNumber = 1;-->
+			<!--$.get(url,-->
+			<!--{-->
+			    <!--"bookId": bookId,-->
+			    <!--"pagesNumber": 1,-->
+			    <!--"isOrder": true-->
+			<!--},-->
+			<!--function(data){-->
+				<!--data = $.parseJSON(data);-->
+				<!--console.log(data.chaptersList);-->
+				<!--showCharpters(data);-->
+			<!--})-->
+		<!--})-->
+
+
+		<!--/*function show(data){-->
+			<!--showCharpters.chapterLists = data.chapterList;-->
+			<!--showCharpters.bookId = bookId;-->
+			<!--ctgMore.pagesNumber = pagesNumber;-->
+			<!--ctgMore.bookId = Math.ceil(data.chaptersNumber/10);-->
+		<!--}*/-->
+		<!--var item = "";-->
+		<!--option.click(function(){-->
+			<!--item = $("select[name=items] option[selected]").text();-->
+		<!--console.log(item);-->
+		<!--})-->
+
+	<!--&lt;!&ndash;&lt;!&ndash;</script>-->
+	</script>
+	<script>
+	 function getBookId(){
+            var url=window.location.href;
+            var s=url.split('/');
+            var bookId;
+            for (x in s){
+            var bookIdTest = new RegExp("^[0-9]+$").test(s[x]);
+                if (bookIdTest==true){
+                    bookId=parseInt(s[x]);
+                    return bookId;
+                }
+            }
+      }
+    var url = "/ChaptersViewAPI/";
+
+  var content = new Vue({                                        //章节列表绑定
+            el: "#content",
+            delimiters: ['[[', ']]'],
+            data: {
+                    chapterLists: [],
+                    bookId: getBookId(),                                          //此处的bookId来自解析本页面url
+            		numPage: 1,
+            		pageNumber: "",
+            		isOrder: true,
+                    bookName: ''
+            },
+            methods: {
+					turnPage: function (numPage) {
+						if(numPage <= content.pageNumber && numPage > 0)
+						{
+							content.numPage = numPage;
+							$.get(url,
+							{
+								"bookId": content.bookId,
+								"numPage": content.numPage,
+								"isOrder": content.isOrder
+							},
+							function(data){
+								data = $.parseJSON(data);
+								show(data);
+							});
+						}
+					},
+					turnOrder: function(order){
+							content.isOrder = order;
+							if ("true" == order){
+                            	$("#correctOrder").addClass("ctgActive").siblings().removeClass("ctgActive");
+							}
+							else if("false" == order){
+                            	$("#invertedOrder").addClass("ctgActive").siblings().removeClass("ctgActive");
+							}
+							$.get(url,
+							{
+								"bookId": content.bookId,
+								"numPage": content.numPage,
+								"isOrder": content.isOrder
+							},
+							function(data){
+								data = $.parseJSON(data);
+								show(data);
+							});
+					}
+            }
+    });
+
+
+    //页面加载时的请求
+    $.get(url,
+    	{
+        "bookId": content.bookId,
+        "numPage": content.numPage,
+        "isOrder": true
+		},
+		function(data){
+				data = $.parseJSON(data);
+				content.pageNumber = data.pageNumber;
+				<!--maxPage = Math.ceil(data.chaptersNumber/10);-->
+				show(data);
+    });
+
+	$("#selectNumPage").change(function(){
+		var numPage = $("#selectNumPage").val();
+		numPage = parseInt(numPage);
+		content.numPage = numPage;
 		$.get(url,
 		{
-		    "bookId": 1,
-		    "pagesNumber": 1,
-		    "isOrder": "True"
+			"bookId": content.bookId,
+			"numPage": content.numPage,
+			"isOrder": content.isOrder
 		},
 		function(data){
 			data = $.parseJSON(data);
-			maxPage = Math.ceil(data.chaptersNumber/10);
-			showCharpters(data);
-		})
+			show(data);
+		});
+	});
 
-		//点击上一页时的请求
-		pre.click(function(){
-			console.log('pre');
-			if(pagesNumber > 1){
-				pagesNumber--;
-				$.get(url,
-				{
-				    "bookId": 1,
-				    "pagesNumber": 1,
-				    "isOrder": "True"
-				},
-				function(data){
-					showCharpters(data);
-				})
-			}
-		})
 
-		//点击下一页时的请求
-		next.click(function(){
-			console.log('1');
-			if(pagesNumber < maxPage){
-				++pagesNumber;
-				$.get(url,
-				{
-				    "bookId": 1,
-				    "pagesNumber": 1,
-				    "isOrder": true
-				},
-				function(data){
-					showCharpters(data);
-				})
-			}
-		})
 
-		//点击倒序时的请求
-		inverted.click(function(){
-			inverted.addClass("ctgActive").siblings().removeClass("ctgActive");
-			pagesNumber = 1;
-			$.get(url,
-			{
-			    "bookId": 1,
-			    "pagesNumber": 1,
-			    "isOrder": false
-			},
-			function(data){
-				showCharpters(data);
-			})
-		})
-
-		//点击正序时的请求
-		positive.click(function(){
-			positive.addClass("ctgActive").siblings().removeClass("ctgActive");
-			pagesNumber = 1;
-			$.get(url,
-			{
-			    "bookId": 1,
-			    "pagesNumber": 1,
-			    "isOrder": true
-			},
-			function(data){
-				showCharpters(data);
-			})
-		})
-
-		function showCharpters(data){		//绑定章节列表数据和总页数的函数
-			var showCharpters = new Vue({	//章节列表绑定
-				el: "#showCharpter",
-				delimiters: ['[[', ']]'],
-				data: {
-					chapterLists: data.chaptersList,
-					bookId: bookId  //此处的bookId来自解析本页面url
-				}
-			})
-			var ctgMore = new Vue({			//总页数和当前页数绑定
-				el: "#ctgMore",
-				delimiters: ['[[', ']]'],
-				data: {
-					pagesNumber: pagesNumber,
-					yeshuNumber: Math.ceil(data.chaptersNumber/10)
-				}
-			})
-			var navRoute = new Vue({			//书名绑定
-				el: "#navRoute",
-				delimiters: ['[[', ']]'],
-				data: {
-					bookName: data.bookName,
-					bookId: bookId  //此处的bookId来自解析本页面url
-				}
-			})
-		}
-		/*function show(data){
-			showCharpters.chapterLists = data.chapterList;
-			showCharpters.bookId = bookId;
-			ctgMore.pagesNumber = pagesNumber;
-			ctgMore.bookId = Math.ceil(data.chaptersNumber/10);
-		}*/
-		var item = "";
-		option.click(function(){
-			item = $("select[name=items] option[selected]").text();
-		console.log(item);
-		})
-
+     //数据绑定函数
+    function show(data){
+            content.chapterLists = data.chaptersList;
+            content.bookName = data.bookName;
+    }
 	</script>
 	</body>
 </html> 

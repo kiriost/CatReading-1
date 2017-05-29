@@ -77,6 +77,8 @@ urlpatterns = [
 
     url(r'^datastatistics/$', admin.views.dataStatisticsPage),
 
+    url(r'^admin/$', admin.views.AdminLoginkPage),
+
 
     # 首页API请求接口
     url(r'^ShowImgViewAPI/', books.views.ShowImgViewAPI.as_view()),
@@ -84,7 +86,7 @@ urlpatterns = [
     url(r'^GroundCompetitiveViewAPI/', books.views.GroundCompetitiveViewAPI.as_view()),
     url(r'^HotRecommendViewAPI/', books.views.HotRecommendViewAPI.as_view()),
     url(r'^NewRecommendViewAPI/', books.views.NewRecommendViewAPI.as_view()),
-    url(r'^LibraryViewAPI/', books.views.LibraryViewAPI.as_view()),
+    url(r'^LibraryViewAPI/', books.views.LibraryAPIView.as_view()),
     # 排行页API请求接口
     url(r'^RankListViewAPI/', books.views.RankListViewAPI.as_view()),
     # 详情页API请求接口
@@ -139,11 +141,16 @@ urlpatterns = [
     url(r'^WordCountAPIView/', admin.views.WordCountAPIView.as_view()),
     url(r'^ReleaseChapterAPIView/', admin.views.WordCountAPIView.as_view()),
     url(r'^CoverImgUploadAPIView/', admin.views.CoverImgUploadAPIView.as_view()),
+    url(r'^RecommendBookAPIView/', admin.views.RecommendBookAPIView.as_view()),
+    url(r'^EditCommentManagerViewAPI/', comment.views.EditCommentManagerViewAPI.as_view()),
+
+    # EditCommentManagerViewAPI
 
     url(r'^ShowUserListAPIView/', admin.views.ShowUserListAPIView.as_view()),
     url(r'^EditUserAPIView/', admin.views.EditUserAPIView.as_view()),
 
     url(r'^DataStaticsAPIView/', statistics.views.DataStaticsAPIView.as_view()),
+
 
     # url(r'^AlipayAPIView/', admin.views.AlipayAPIView.as_view()),
 ]

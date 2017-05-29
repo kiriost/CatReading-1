@@ -87,9 +87,8 @@ class CreateBookAPIView(APIView):
 
 class DeleteBookAPIView(APIView):
 
-    @ csrf_exempt
-    def post(self, request):
-        bookId = request.POST.get("bookId")
+    def get(self, request):
+        bookId = request.GET.get("bookId")
         book = BookInfo.objects.get(id=bookId)
         book.delete()
         message = "书籍删除成功"
@@ -140,15 +139,18 @@ class EditBookInfoAPIView(APIView):
     def post(self, request):
         serializer = EditBookInfoSerializers(request.data)
         data = serializer.data
-        book = BookInfo.objects.get(id=data['bookId'])
-        book.name = data['name']
+        book = BookInfo.objects.get(id=data['id'])
+        book.name = data['bookName']
         book.author = data['author']
         book.state = data['state']
         book.type = data['type']
         book.describe = data['describe']
+        if "" == data['testimonials']:
+            book.testimonials = data['testimonials']
+        else:
+            book.testimonials = data['testimonials'] + " : "
         book.save()
         message = "书籍修改成功"
-        print message
         return shortcuts.success_response(message)
 
 
@@ -178,6 +180,7 @@ class CreateChapterAPIView(APIView):
         bookContent = BooksContent(BookInfo=book, chaptersId=chaptersId, chaptersName=data['chaptersName'], chaptersType=data['chaptersType'], chaptersContent=data['chaptersContent'], chaptersState=data['chaptersState'])
         bookContent.wordNumber = len(data['chaptersContent'])
         bookContent.save()
+        print u"章节内容" + data['chaptersContent']
         message = "章节创建成功"
         return shortcuts.success_response(message)
 
@@ -204,13 +207,14 @@ class ReleaseChapterAPIView(APIView):
         book.add_chapters_number()
         try:
             chapter = BooksContent.objects.get(bookInfo=book, chaptersName=data['chaptersName'], chaptersContent=data['chaptersContent'])
-            chapter.chaptersType=data['chaptersType']
+            chapter.chaptersType = data['chaptersType']
             chapter.chaptersState = data['chaptersState']
             chapter.save()
         except BooksContent.DoesNotExist:
             bookContent = BooksContent(BookInfo=book, chaptersId=chaptersId, chaptersName=data['chaptersName'], chaptersType=data['chaptersType'], chaptersContent=data['chaptersContent'], chaptersState=data['chaptersState'])
             bookContent.wordNumber = len(data['chaptersContent'])
             bookContent.save()
+        # print data['chaptersContent']
         message = "章节创建成功"
         return shortcuts.success_response(message)
 
@@ -289,8 +293,13 @@ class RecommendBookAPIView(APIView):
         headImgBook = request.GET.get("headImgBook")
 
         book = BookInfo.objects.get(id=bookId)
-        book(testimonials=testimonials, hotBook=hotBook, freeBook=freeBook, rankBook=rankBook, newBook=newBook, headImgBook=headImgBook)
-        book.save
+        book.testimonials = testimonials
+        book.hotBook = hotBook
+        book.freeBook = freeBook
+        book.rankBook = rankBook
+        book.newBook = newBook
+        book.headImgBook = headImgBook
+        book.save()
         message = u"推荐成功"
         return shortcuts.success_response(message)
 
@@ -355,8 +364,9 @@ class DeleteChapterAPIView(APIView):
 
     def get(self, request):
         id = request.GET.get("bookId")
-        chapterId = request.GET.get("chapterId")
+        chapterId = request.GET.get("chaptersId")
         book = BookInfo.objects.get(id=id)
+        print chapterId
         chapter = BooksContent.objects.filter(BookInfo__id=id).filter(chaptersId=chapterId).get()
         chapter.delete()
         book.subtract_chapters_number()
@@ -412,7 +422,7 @@ class ShowUserListAPIView(APIView):
     def get(self, request):
         numPage = request.GET.get("numPage")
         users = User.objects.all()
-        paginator = Paginator(users, 20)
+        paginator = Paginator(users, 5)
         pageNumber = paginator.num_pages
         serializers = ShowUserListSerializers(paginator.page(numPage).object_list, many=True)
         # serializers = ShowUserListSerializers(users, many=True)
@@ -442,6 +452,17 @@ class EditUserAPIView(APIView):
         message = "用户信息修改成功"
         return shortcuts.success_response(message)
 
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/03/30
+    Description:     管理员登录页面
+"""
+
+
+def AdminLoginkPage(request):
+    return render(request, "admin/login.html")
 
 """
     Author:	         毛毛

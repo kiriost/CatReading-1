@@ -175,13 +175,13 @@ var Win = $(window);
 				"bookId": bookId
 			},
 			function(data){
-				if(data){
+				if(!data.code){
 					window.location.href = window.location.href;
 					alert("捧场成功");
 					pengChang.hide();
 				}
 				else{
-					alert("余额不足，请充值");
+					alert(data.data);
 					pengChang.hide();
 				}
 			})
@@ -200,14 +200,14 @@ var Win = $(window);
 				"bookId": bookId
 			},
 			function(data){
-				if(data){
+				if(!data.code){
 					bookCommandChange(data);
-					alert("提交成功");
 					$('#addTitle').val('');
 					$('#addText').val('');
 					fixCommand.hide();
+					window.location.href = window.location.href;
 				}else{
-					alert("阿偶，出错啦，请重新提交")
+					alert(data.data)
 					fixCommand.hide();
 				}
 			})
@@ -223,3 +223,23 @@ var Win = $(window);
 				$(".inputSize").html(0);
 			}
 		}
+
+	//点击追书
+    $('#followBook').click(function(){
+        $.get(url, {"bookId": bookId}, function(data){
+        if(data)
+            $('#followBook').css('opacity', 0.5).html('已追书')
+            })
+    })
+
+
+    //点击自动订阅
+    $('#aotoBuy').click(function(){
+         $.get(url, {"bookId": bookId}, function(data){
+              if(data){
+                 $('#aotoBuy').css('opacity', 0.5).html('已订阅')
+              }else{
+                  alert("余额不足，请充值")
+               }
+         });
+    });

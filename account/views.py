@@ -38,7 +38,7 @@ class UserLoginAPIView(APIView):
         if serializer.is_valid():
             data = serializer.data
             print data
-            user = auth.authenticate(userName=data["userName"], password=data["password"])
+            user = auth.authenticate(phone=data["userName"], password=data["password"])
             print user
             if user:
                 auth.login(request, user)
@@ -46,7 +46,7 @@ class UserLoginAPIView(APIView):
                 print message
                 return shortcuts.success_response(message)
             else:
-                message = "用户名或密码错误"
+                message = "您输入的帐号密码不正确，请重新输入    "
                 print message
                 return shortcuts.error_response(message)
         else:
@@ -70,6 +70,7 @@ class UserLogoutAPIView(APIView):
         message = u"成功推出"
         return shortcuts.success_response(message)
 
+
 class UserRegisterAPIView(APIView):
 
     @csrf_exempt
@@ -83,7 +84,8 @@ class UserRegisterAPIView(APIView):
             user = User.objects.create(userName=data['userName'], phone=phone)
             user.set_password(data["password"])
             user.save()
-            UserProfile(User=user)
+            userProfile = UserProfile(User=user)
+            userProfile.save()
             message = "注册成功"
             return shortcuts.success_response(message)
         else:
@@ -106,7 +108,6 @@ def CheckPhone(phone):
         return True
     except User.DoesNotExist:
         return False
-
 
 """
     Author:	         毛毛
@@ -148,10 +149,10 @@ class MessageAPIView(APIView):
         else:
             # 号码存在
             if CheckPhone(phone):
-                # 页面为注册
-                if pageSate:
-                    return SendMessageBefore(phone, request)
                 # 页面为找回
+                if pageSate == 1:
+                    return SendMessageBefore(phone, request)
+                # 页面为注册
                 else:
                     message = "手机号已注册"
                     print message
@@ -161,10 +162,13 @@ class MessageAPIView(APIView):
                 # 页面为注册
                 if pageSate == 0:
                     return SendMessageBefore(phone, request)
-                # 页面
+                # 页面为找回0
                 else:
                     message = "用户不存在"
                     return shortcuts.error_response(message)
+
+
+
 
 
 """
@@ -187,7 +191,7 @@ class CheckTokenAPIView(APIView):
             message = "验证通过"
             return shortcuts.success_response(message)
         else:
-            message = "验证失败"
+            message = "短信验证码无效，请稍后点击重新发送短信"
             return shortcuts.error_response(message)
 
 
@@ -260,6 +264,14 @@ class UserCenterAPIView(APIView):
         center['bookComment'] = commentserializer.data
         return HttpResponse(json.dumps(center.dict()))
 
+
+# class UserChaseBooks(APIView):
+#     def get(self, request):
+#         request.GET['']
+#
+#
+# class UserSubscribersBooks(APIView):
+#     def get(self, request):
 
 
 

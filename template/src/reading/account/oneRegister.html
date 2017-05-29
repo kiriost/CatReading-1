@@ -16,20 +16,21 @@
 		</div>
 		<div class="middle">
 			<div class="content" id="content">
-				<div class="para reg-plan-div">
-			        <div class="reg-plan-map">
-			            <i class="i0 active">•</i>
-			            <span class="sp0"></span>
-			            <i class="i1">•</i>
-			            <span class="sp1"></span>
-			            <i class="i2">•</i>
-			        </div>
-			        <div class="reg-plan-text">
-			            <span class="spt0 active">填写手机号</span>
-			            <span class="spt1">填写用户名</span>
-			            <span class="spt2">成功</span>
-			        </div>
-			    </div>
+				<div class="para reg-plan-div">  <!-- 复制这一块儿，不同页面添加active-->
+					<div class="reg-plan-map">
+						<i class="i0 active">•</i>
+						<span class="sp0"></span>
+						<i class="i1">•</i>
+						<span class="sp1"></span>
+						<i class="i2">•</i>
+						<span class="sp2"></span>
+					</div>
+					<div class="reg-plan-text">
+						<span class="spt0 active">填写手机号</span>
+						<span class="spt1">设置新密码</span>
+						<span class="spt2">找回成功</span>
+					</div>
+				</div>
 				
 			    <div class="userLogin">
 					<form class="search" autocomplete="off" style="margin-top:20px" onsubmit="return checksubmit()">
@@ -43,10 +44,8 @@
 							<input type="text" name="password" id ="captcha" class="accountPassword messageInput" placeholder='请输入右边的验证码'/>
 							<img src="/captcha/" id="captcha-img" style="float: right;">
 						</div> 
-						<div style="height: 42px;">							
-							<p id="codeFalse" style="font-size: 42px; color: #E53935; display: none;">验证码输入不正确（区分大小写）</p>
-							<!--<p id="codeTrue" style="font-size: 42px; color: rgb(57, 179, 62); display: none;">验证码输入正确</p>-->
-							<p id="message" style="font-size: 42px; color: rgb(57, 179, 62); display: none;"></p>
+						<div style="color: #E53935;font-size: 42px; padding-top: 25px;">
+							<span id="error-info"></span>
 						</div>
 						<input type="submit" value="获取验证码" class="loginButton" />
 						<div class="loginChoose clearfix">

@@ -236,7 +236,7 @@
 					</div>
 					<!-- adjust结束 -->
 					<div class="contentTxt" id="contentTxt">
-						<p></p>
+
 					</div>
 
 					<!--	 -->
@@ -252,7 +252,7 @@
 			<!-- content结束 -->
 		</div>
 		<!-- root结束 -->
-		<script src="../../../../static/src/js/lib/zepto.min.js"></script>
+		<script src="/static/src/js/lib/zepto.min.js"></script>
 		<script>
 			//缓存方法封装
 			var Util = (function(){
@@ -391,7 +391,13 @@
 					data = $.parseJSON(data);
 					//数据处理
 					$('#title').html(data.chaptersName);
-					$('#contentTxt').html(data.chaptersContent);
+					var contentArrays = data.chaptersContent.split('\n');
+					$('#contentTxt').empty();
+					console.log(contentArrays);
+					for(var i = 0; i < contentArrays.length; i++){
+						$('#contentTxt').append('<p>' + contentArrays[i] + '</p>');
+					}
+					<!--$('#contentTxt').html(data.chaptersContent);-->
 				})
 			});
 

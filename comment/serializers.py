@@ -51,11 +51,30 @@ class CommentUserSerializers(serializers.ModelSerializer):
 
 
 class CommentManagerSerializers(serializers.ModelSerializer):
+
+    COMMENTTYPE_CHOICE = {0: "普通评论", 1: "置顶", 2: "精华", 3: "置顶 精华"}
+
     commentTime = serializers.SerializerMethodField()
+    commentType = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ('userName', 'commentTitle', 'commentContent', 'commentTime')
+        fields = ('id', 'userName', 'commentTitle', 'commentContent', 'commentTime', 'commentStick', 'commentEssence', 'isShow', 'commentType')
 
     def get_commentTime(self, obj):
         return obj.commentTime.strftime("%Y-%m-%d")
+
+    def get_commentType(self, obj):
+
+        # type = 0
+        #
+        # if obj.commentStick and obj.commentEssence:
+        #     type = 3
+        #
+        # if not obj.commentStick and obj.commentEssence:
+        #     type = 2
+        #
+        # if not obj.commentStick and obj.commentEssence:
+        #     type = 1
+
+        return self.COMMENTTYPE_CHOICE[obj.commentType]

@@ -368,20 +368,19 @@ var defaults = {
 
     // 动画完成时的执行函数
     onAnimationComplete : null
-
 }
 
 var date_labels = new Array();
 var chartPVNumberData = new Array();
 var chartRewardNumberData = new Array();
-for(i in totalData.lineCharData){
+
+for (var i = 6; i >= 0; i--) {
     date_labels.push(totalData.lineCharData[i].produceDataDate);
     chartPVNumberData.push(totalData.lineCharData[i].dayPVNumber);
     chartRewardNumberData.push(totalData.lineCharData[i].dayRewardNumber);
 }
 
 var dayData = {
-    <!--labels : [totalData.lineCharData[1].produceDataDate,"5月10日","5月11日","5月12日","5月13日","5月14日","5月15日"],-->
     labels : date_labels,
     datasets : [
         {

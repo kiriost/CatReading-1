@@ -23,7 +23,7 @@ class CompetitiveListSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = BookInfo
-        fields = ('bookName', 'id', 'type')
+        fields = ('bookName', 'testimonials', 'id', 'type')
 
     def get_type(self, obj):
         return booktype.bookType[obj.type]
@@ -118,17 +118,19 @@ class BookInfoSerializers(serializers.ModelSerializer):
 
 class LibrarySerializers(serializers.ModelSerializer):
     chaptersName = serializers.SerializerMethodField()
-    chaptersId = serializers.SerializerMethodField()
+    updateTime = serializers.SerializerMethodField()    
 
     class Meta:
         model = BookInfo
-        fields = ('bookName', 'id', 'updateTime', 'wordNumber', 'author', 'chaptersName', 'chaptersId')
+        fields = ('id', 'updateTime', 'wordNumber', 'author',
+                  'chaptersNumber',  'chaptersName', 'bookName')
 
     def get_chaptersName(self, obj):
-        return obj.bookinfo_bookscontent.get().chaptersName
+        return obj.bookinfo_bookscontent.get(chaptersId=obj.chaptersNumber).chaptersName
 
-    def get_chaptersId(self, obj):
-        return obj.bookinfo_bookscontent.get().chaptersId
+    def get_updateTime(self, obj):
+        return obj.bookinfo_bookscontent.get(chaptersId=obj.chaptersNumber).updateTime.strftime("%m-%d %H:%M")
+
 
 """
         Author:	         毛毛

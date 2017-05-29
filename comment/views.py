@@ -5,6 +5,7 @@ from utils import shortcuts
 from django.http import HttpResponse, QueryDict
 from .models import Comment
 from books.models import BookInfo
+from django.core.paginator import Paginator
 from .serializers import CommentSerializers, CommentManagerSerializers
 from account.decorators import login_required
 
@@ -53,7 +54,7 @@ class CommentBookViewAPI(APIView):
 
     def get(self, request):
         bookId = request.GET['bookId']
-        book = Comment.objects.filter(bookId=bookId).all()
+        book = Comment.objects.filter(bookId=bookId).filter(isShow=False).all()[0:3]
         book_comment = CommentSerializers(book, many=True)
         comment = QueryDict(mutable=True)
         comment['bookComment'] = book_comment.data
@@ -103,10 +104,65 @@ class CommentManagerViewAPI(APIView):
 
     def get(self, request):
         bookId = request.GET['bookId']
+        numPage = request.GET['numPage']
         book = BookInfo.objects.get(id=bookId)
         comments = Comment.objects.filter(bookId=bookId).all()
-        commentManagerSerializers = CommentManagerSerializers(comments, many=True)
+        paginator = Paginator(comments, 10)
+        commentManagerSerializers = CommentManagerSerializers(paginator.page(numPage), many=True)
         comment = QueryDict(mutable=True)
         comment['commentManagerItems'] = commentManagerSerializers.data
         comment['bookName'] = book.bookName
+        comment['pageNumber'] = paginator.num_pages
         return HttpResponse(json.dumps(comment.dict()))
+
+
+class EditCommentManagerViewAPI(APIView):
+
+    def get(self, request):
+
+        commentId = request.GET["commentId"]
+        isShow = request.GET["isShow"]
+        commentStick = request.GET["commentStick"]
+        commentEssence = request.GET["commentEssence"]
+        comment = Comment.objects.get(id=commentId)
+
+        print commentStick
+        print commentEssence
+
+        type = 0
+
+        if ('true' == commentStick) and ('true' == commentEssence):
+            type = 3
+            commentStick = True
+            commentEssence = True
+
+        if ('false' == commentStick) and ('true' == commentEssence):
+            type = 2
+            commentStick = False
+            commentEssence = True
+
+        if ('true' == commentStick) and ('false' == commentEssence):
+            type = 1
+            commentStick = True
+            commentEssence = False
+
+        if ('false' == commentStick) and ('false' == commentEssence):
+            type = 0
+            commentStick = False
+            commentEssence = False
+
+        if ('true' == isShow):
+            isShow = True
+        else:
+            isShow = False
+
+        comment.commentType = type
+        print type
+        comment.save()
+
+        comment.commentStick = commentStick
+        comment.commentEssence = commentEssence
+        comment.isShow = isShow
+        comment.save()
+        message = "评论状态修改成功"
+        return shortcuts.success_response(message)

@@ -83,16 +83,6 @@
                                 <input v-model="editPhone" type="text" class="form-control">                              
                             </div>
                         </div>
-                        <!--<div class="row">-->
-                            <!--<div class="col-sm-6">-->
-                                <!--<label>用户类型</label>-->
-                                <!--<select class="form-control">-->
-                                    <!--<option value="1">一般用户</option>-->
-                                    <!--<option value="2">签约作家</option>-->
-                                    <!--<option value="3">超级管理员</option>-->
-                                <!--</select>                                -->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-sm-6">
                                 <div class="form-group" style="float: left;">
@@ -124,83 +114,81 @@
     <script src="http://cdn.bootcss.com/remodal/1.1.1/remodal.js"></script>
     <script src="/static/src/js/util/csrfTokenHeader.js"></script>
     <script type="text/javascript">
-    <!--当前页面-->
-    function turnPage(numPage){
-        $.ajax({
-            url: "/ShowUserListAPIView/",
-            async: false,
-            type: "GET",
-            data: {numPage: numPage},
-            success: function(data) {
-                data = $.parseJSON(data);
-                showUserList(data);
+
+
+    var v = new Vue({
+        el: "#app",
+        delimiters: ['[[', ']]'],
+        data: {
+            numPage: 1,
+            pageNumber: "",
+
+            editId: "",
+            editUserName: "",
+            editPhone: "",
+            editUserType: "",
+            editPassword: "",
+
+            userInfo: []
             },
-            error: function() {
-                alert("创建失败");
-            }
-        });
-    }
-
-    var numPage = 1;
-    turnPage(numPage);
-
-    function showUserList(data){
-        var v = new Vue({
-            el: "#app",
-            delimiters: ['[[', ']]'],
-            data: {
-                editId: "",
-                editUserName: "",
-                editPhone: "",
-                editUserType: "",
-                editPassword: "",
-
-                userInfo: data.userInfo,
-                pageNumber: data.pageNumber,
-                numPage: numPage,
-                EditState: 0
-                },
-            methods: {
-                turnPage: function (numPage) {
-                    if(numPage<=totalData.pageNumber&&numPage>=0)
-                    {
-                        $.get("/ShowUserListAPIView/", {
-                            numPage: numPage
-                        }, function(data) {
-                            data = $.parseJSON(data);
-                            showUserList(data);
-                        });
-                    }
-                },
-                editUser: function(user){
-                    v.EditState = 1
-                    v.editId = user.id;
-                    v.editUserName = user.userName;
-                    v.editPhone = user.phone;
-                },
-                saveUserInfo: function(){
-                    $.ajax({
-                        url: "/EditUserAPIView/",
-                        async: false,
-                        type: "POST",
-                        data: {
-                            userId: v.editId,
-                            userName: v.editUserName,
-                            userPhone: v.editPhone,
-                            userPassword: v.editPassword,
-                            userType: 1
-                        },
-                        success: function(data) {
-					        window.location.href = "/userManager/";
-                        },
-                        error: function() {
-                            alert("创建失败");
-                        }
+        methods: {
+            turnPage: function (numPage) {
+                if(numPage <= v.pageNumber && numPage > 0)
+                {
+                    $.get("/ShowUserListAPIView/", {
+                        numPage: numPage
+                    }, function(data) {
+                        data = $.parseJSON(data);
+                        v.numPage = numPage;
+                        v.userInfo = data.userInfo;
                     });
                 }
+            },
+            editUser: function(user){
+                v.EditState = 1
+                v.editId = user.id;
+                v.editUserName = user.userName;
+                v.editPhone = user.phone;
+            },
+            saveUserInfo: function(){
+                $.ajax({
+				    beforeSend: csrfTokenHeader,
+                    url: "/EditUserAPIView/",
+                    async: false,
+                    type: "POST",
+                    data: {
+                        userId: v.editId,
+                        userName: v.editUserName,
+                        userPhone: v.editPhone,
+                        userPassword: v.editPassword,
+                        userType: 1
+                    },
+                    success: function(data) {
+                        window.location.href = "/userManager/";
+                    },
+                    error: function() {
+                        alert("创建失败");
+                    }
+                });
             }
-        });
-    }
+        }
+    });
+
+
+    $.ajax({
+        url: "/ShowUserListAPIView/",
+        async: false,
+        type: "GET",
+        data: {numPage: v.numPage},
+        success: function(data) {
+            data = $.parseJSON(data);
+            v.pageNumber = data.pageNumber;
+            v.userInfo = data.userInfo;
+        },
+        error: function() {
+            alert("创建失败");
+        }
+    });
 
     </script>
 </body>

@@ -77,20 +77,28 @@
                     <li class="active"><a href="#">作品设置</a></li>
                     <li><a v-bind:href="'/WriteChapter/'+bookId">草稿箱</a></li>
                     <li><a v-bind:href="'/publish/'+bookId">已发布章节</a></li>
-                    <li><a href="'/commentManager/">评论管理</a></li>
+                    <li><a v-bind:href="'/commentManager/'+bookId">评论管理</a></li>
                 </ul>
                 <div>
-                    <form class="form-horizontal" role="form" style="margin-top: 20px;">
+                    <div class="row text-center" style="margin-left: 15px;">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">
-                                <img v-bind:src="'/static/coverImg/'+coverImg" style="width:120px; height: 180px;">
+                                <img v-bind:src="'/static/coverImg/'+coverImg" style="width:120px; height: 180px; margin-bottom: 15px; margin-top: 15px;">
                                 <div id="uploadCoverImg">上传封面</div>
                             </label>
-                        </div>
+                        </div>                        
+                    </div>
+                    <form class="form-horizontal" role="form" style="margin-top: 20px;">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">作品名称</label>
                             <div class="col-sm-5">
                                 <input type="text" v-model="bookName" class="form-control" id="firstname">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">推荐语</label>
+                            <div class="col-sm-3">
+                                <input type="text" v-model="testimonials" class="form-control" id="firstname">
                             </div>
                         </div>
                         <div class="form-group">
@@ -186,6 +194,7 @@
             wordNumber: 1000,
             chaseBooksNumber: 100,
             describe: "hahahahahahah",
+            testimonials: "",
             type:1,
             state:1
         },
@@ -200,6 +209,7 @@
                 this.describe = data.describe;
                 this.type = data.type;
                 this.state = data.state;
+                this.testimonials = data.testimonials;
             }
         }
     });
@@ -257,12 +267,13 @@
             url: "/EditBookInfoAPIView/",
             async: false,
             data: {
-                bookId: v.bookId,
-                name: v.bookName,
+                id: v.bookId,
+                bookName: v.bookName,
                 author: v.author,
                 type: v.type,
                 state: v.state,
-                describe: v.describe
+                describe: v.describe,
+                testimonials: v.testimonials
             },
             dataType: "json",
             type: "POST",
@@ -280,14 +291,13 @@
 
     function deleteBook() {
         $.ajax({
-            beforeSend: csrfTokenHeader,
             url: "/DeleteBookAPIView/",
             async: false,
             data: {
                 bookId: v.bookId
             },
             dataType: "json",
-            type: "POST",
+            type: "GET",
             success: function(data) {
                 console.log(data.code);
                 if (!data.code) {

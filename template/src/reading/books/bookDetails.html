@@ -32,7 +32,6 @@
 				</div>
 				{% else %}
 				<div class="headerLogin" id="headerLogin">
-					<a class="loginText">{{ request.user.userName }}</a>
 					<a href="/center/"><img src="/static/src/img/icon/writter.jpg"></a>
 				</div>
 				{% endif %}
@@ -55,9 +54,9 @@
 					</div>
 					<!-- module结束 -->
 					<div class="bookButton">
-						<a href="#">开始阅读</a>
-						<a href="#">追  书</a>
-						<a href="#">自动订阅</a>
+						  <a id="beginRead">开始阅读</a>
+						  <a id="followBook">追  书</a>
+						  <a id="aotoBuy">自动订阅</a>
 					</div>
 					<div class="bookRecently" id="bookRecently">
 						<div class="recentlyHeader clearfix">

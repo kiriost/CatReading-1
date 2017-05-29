@@ -7,8 +7,8 @@ from django.db import models
 class UserManager(models.Manager):
     use_in_migrations = True
 
-    def get_by_natural_key(self, userName):
-        return self.get(**{self.model.USERNAME_FIELD: userName})
+    def get_by_natural_key(self, phone):
+        return self.get(**{self.model.USERNAME_FIELD: phone})
 
 
 REGULAR_USER = 0
@@ -19,7 +19,7 @@ class User(AbstractBaseUser):
     # 用户名
     userName = models.CharField(max_length=32, unique=True)
     # 电话号码
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=11, unique=True)
     # 是否可用
     is_active = models.BooleanField(default=True)
     # 用户注册时间
@@ -33,7 +33,7 @@ class User(AbstractBaseUser):
     # 是否禁用
     isForbidden = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'userName'
+    USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
@@ -77,7 +77,24 @@ class UserChaseBooks(models.Model):
     # 用户Id
     userId = models.IntegerField("用户ID", default=True)
     # 书籍名
-    # bookName = models.CharField("书籍名称", max_length=20)
+    bookName = models.CharField("书籍名称", max_length=20)
+    # 书籍图片
+    coverImg = models.ImageField("书籍封面", default="./2706179_185025082_2.jpg")
+    # 最新更新的章节数
+    recentlyCharpterNumber = models.IntegerField("最新更新章节数", default=0)
+    # 最新章节
+    recentlyCharpter = models.CharField("最新的章节", max_length=20)
+    # 上次阅读的章节数
+    lastReadCharpterNumber = models.IntegerField("上次阅读的章节数", default=0)
+    # 上次阅读的章节
+    lastReadCharpter = models.CharField("上次阅读的章节", max_length=20)
+
+
+class UserSubscribersBooks(models.Model):
+    # 用户Id
+    userId = models.IntegerField("用户ID", default=True)
+    # 书籍名
+    bookName = models.CharField("书籍名称", max_length=20)
     # 书籍图片
     coverImg = models.ImageField("书籍封面", default="./2706179_185025082_2.jpg")
     # 最新更新的章节数

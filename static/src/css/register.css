@@ -1,4 +1,8 @@
-
+html{
+	font-size: 10px;
+	height: 100%;
+	background-color: #F5F5F5;
+}
 .header{
 	height: 158px;
 	width: 100%;
@@ -44,7 +48,7 @@
 /*内容*/
 .middle{
 	width: 100%;
-	height: 2000px; 
+	height: 100%; 
 	background-color: #F5F5F5;
 	overflow: hidden;
 }
@@ -59,7 +63,7 @@
 .bkAccount{
 	width: 100%;
 	height: 130px;
-	background: url(../../..=/static/src/img/icon/loginPerson.jpg) no-repeat 36px;
+	background: url(../../../static/src/img/icon/loginPerson.jpg) no-repeat 36px;
 	background-color: #FFF;
 	overflow: hidden;
 	border-bottom: 4px solid #DDD;
@@ -144,17 +148,20 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 }
 .reg-plan-map span {
     border-top: 6px solid #DADADA;
-    width: 49%;
+    width: 48%;
     top: 29px;
 }
 .reg-plan-map span.active{
 	border-top: 6px solid #E53935;
 }
 .reg-plan-map .sp1 {
-    left: 50%;
+    left: 48%;
+}
+.reg-plan-map .sp2 {
+    left: auto;
 }
 .reg-plan-map .i1 {
-    left: 50%;
+    left: 48%;
     margin-left: -13px;
 }
 .reg-plan-map .i2 {
@@ -187,7 +194,7 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
     color: #535353;
 }
 .reg-plan-text .spt1 {
-    left: 50%;
+    left: 48%;
     margin-left: -67px;
 }
 .reg-plan-text .spt2 {
@@ -207,6 +214,7 @@ input::-webkit-input-placeholder{  /*改变搜索框内默认颜色*/
 .message{
 	width: 100%;
 	height: 130px;
+	background: url(../../../static/src/img/icon/message.jpg) no-repeat right;
 	background-color: #FFF;
 	overflow: hidden;
 	border-bottom: 4px solid #DDD;

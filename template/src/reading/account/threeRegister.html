@@ -16,29 +16,30 @@
 		</div>
 		<div class="middle">
 			<div class="content" id="content">	
-				<div class="para reg-plan-div">
-			        <div class="reg-plan-map">
-			            <i class="i0 active">•</i>
-			            <span class="sp0 active"></span>
-			            <i class="i1 active">•</i>
-			            <span class="sp1 active"></span>
-			            <i class="i2 active">•</i>
-			        </div>
-			        <div class="reg-plan-text">
-			            <span class="spt0 active">填写手机号</span>
-			            <span class="spt1 active">填写用户名</span>
-			            <span class="spt2 active">成功</span>
-			        </div>
-			    </div>
+				<div class="para reg-plan-div">  <!-- 复制这一块儿，不同页面添加active-->
+					<div class="reg-plan-map">
+						<i class="i0 active">•</i>
+						<span class="sp0 active"></span>
+						<i class="i1 active">•</i>
+						<span class="sp1 active"></span>
+						<i class="i2 active">•</i>
+						<span class="sp2 active"></span>
+					</div>
+					<div class="reg-plan-text">
+						<span class="spt0 active">填写手机号</span>
+						<span class="spt1">设置新密码</span>
+						<span class="spt2">找回成功</span>
+					</div>
+				</div>
 				<div class="gougou"><img src="/static/src/img/icon/successAgree.jpg"></div>
-				<div class="compeleteRegister"><span class="registerName">zy</span>, 欢迎您成为猫阅读的一员，猫阅读将竭诚为您提供最优质的服务！</div>
-				<a href="login.html" class="autoSkip">1秒后自动跳转至原页面 >></a>
+				<div class="compeleteRegister">欢迎您成为猫阅读的一员，猫阅读将竭诚为您提供最优质的服务！</div>
+				<a href="/login/" class="autoSkip"><span id="time"></span>秒后自动跳转至登录页面</a>
 			</div>
 			<!-- content结束 -->
 		</div>
 		<!-- middle结束 -->
 	</body>
-	<script src="../../../../static/src/js/lib/zepto.min.js"></script>
+	<script src="/static/src/js/lib/zepto.min.js"></script>
 	<script>
 		var choose = $('.chooseleft');
 		var loginYes = $('.loginYes');
@@ -47,4 +48,18 @@
 			loginYes.toggle();
 			loginNo.toggle();
 			})
+			var time = $('#time');
+	var num = 5;
+	function startCount(){
+		  time.html(num);
+		  num=num-1;
+		  i=setTimeout("startCount()",1000);
+		  if(num==0){
+		  	//跳转到首页
+			window.location.href = "/";
+		  	clearTimeout(i);
+		  	console.log(4);
+		  }
+	}
+	startCount();
 	</script>

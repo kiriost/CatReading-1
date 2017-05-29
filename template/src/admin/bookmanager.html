@@ -40,19 +40,28 @@
 </head>
 
 <body>
+    <!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
+        <!--<div class="container-fluid">-->
+            <!--<div class="navbar-header">-->
+                <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
+                    <!--<span class="sr-only">Toggle navigation</span>-->
+                    <!--<span class="icon-bar"></span>-->
+                    <!--<span class="icon-bar"></span>-->
+                    <!--<span class="icon-bar"></span>-->
+                <!--</button>-->
+                <!--<a class="navbar-brand" href="#">猫阅读</a>-->
+                <!--<button type="button" class="btn btn-default navbar-btn">Sign in</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</nav>-->
     <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">猫阅读</a>
-            </div>
-        </div>
-    </nav>
+		<div class="container-fluid">
+				 <div id="navbar" class="navbar-collapse collapse">
+                     <a class="navbar-brand" href="#">猫阅读</a>
+		        </div>
+		</div>
+	</nav>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
@@ -148,7 +157,7 @@
                                 <td class="funcButton">
                                     <a v-on:click="del(item.id)">删除</a>
                                     <a v-bind:href="'/WriteChapter/'+item.id">编辑</a>
-                                    <a href="#modal">推荐</a>
+                                    <a href="#modal"  v-on:click="editRecommendBook(item)">推荐</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -160,16 +169,16 @@
                     <div style="border-bottom: solid 1px #E6E6E6; margin-bottom: 20px;">
                         <h3>首页推荐</h3>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label>推荐语</label>
-                            <input v-model="testimonials" type="input" class="form-control">
-                        </div>                      
-                    </div>
+                    <!--<div class="row">-->
+                        <!--<div class="col-sm-6">-->
+                            <!--<label>推荐语</label>-->
+                            <!--<input placeholder="未设置" v-model="editTestimonials" type="input" class="form-control">-->
+                        <!--</div>                      -->
+                    <!--</div>-->
                     <div class="row" style="margin-top: 20px;">
                         <div class="form-group col-sm-2">
                             <label>首页推荐</label>
-                            <select v-model="headImgBook" class="form-control">
+                            <select v-model="editHeadImgBook" class="form-control">
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -178,7 +187,7 @@
                         </div>
                         <div class="form-group col-sm-2">
                             <label>热门推荐</label>
-                            <select v-model="hotBook" class="form-control">
+                            <select v-model="editHotBook" class="form-control">
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -190,7 +199,7 @@
                         </div>
                         <div class="form-group col-sm-2">
                             <label>免费推荐</label>
-                            <select v-model="freeBook" class="form-control">
+                            <select v-model="editFreeBook" class="form-control">
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -202,7 +211,7 @@
                         </div>
                         <div class="form-group col-sm-2">
                             <label>上架精品</label>
-                            <select v-model="rankBook" class="form-control">
+                            <select v-model="editRankBook" class="form-control">
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -214,7 +223,7 @@
                         </div>
                         <div class="form-group col-sm-2">
                             <label>新书推荐</label>
-                            <select v-model="newBook" class="form-control">
+                            <select v-model="editNewBook" class="form-control">
                                 <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -230,7 +239,7 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-sm-4">
-                            <div v-on:click="" class="btn btn-primary">
+                            <div v-on:click="saveRecommendBook(editBookId)" class="btn btn-primary">
                                 保存更改
                             </div>
                         </div>
@@ -257,6 +266,14 @@
         delimiters: ['[[', ']]'],
         el: "#app",
         data: {
+            editBookId: "",
+            editTestimonials: "",
+            editHeadImgBook: "",
+            editHotBook: "",
+            editFreeBook: "",
+            editRankBook: "",
+            editNewBook: "",
+
             EditState: 1,
             total: 1,
             now: 1,
@@ -274,30 +291,6 @@
             del: function(id)
             {
                 $.ajax({
-                    beforeSend: csrfTokenHeader,
-                    url: "/DeleteBookAPIView/",
-                    async: false,
-                    data: {
-                        bookId: id
-                    },
-                    dataType: "json",
-                    type: "POST",
-                    success: function(data) {
-                        console.log(data.code);
-                        if (!data.code) {
-					        window.location.href = "/bookManager/";
-                        
-                        }
-                    },
-                    error: function() {
-                        alert("错误");
-                    }
-                });
-
-            },
-            <!--待续***********************************************-->
-            recommendBook: function(){
-                $.ajax({
                     url: "/DeleteBookAPIView/",
                     async: false,
                     data: {
@@ -308,8 +301,45 @@
                     success: function(data) {
                         console.log(data.code);
                         if (!data.code) {
-					        window.location.href = "/bookManager/";
+                            alert(data.data);
+					        window.location.href = "/bookManager/";                        
+                        }
+                    },
+                    error: function() {
+                        alert("错误");
+                    }
+                });
+            },
+            editRecommendBook: function(book){
+                v.editBookId = book.id;
+                v.editTestimonials = book.testimonials;
+                v.editHeadImgBook = book.headImgBook;
+                v.editHotBook = book.hotBook;
+                v.editFreeBook = book.freeBook;
+                v.editRankBook = book.rankBook;
+                v.editNewBook = book.newBook;
+            },
+            <!--待续***********************************************-->
+            saveRecommendBook: function(bookId){
+                $.ajax({
+                    url: "/RecommendBookAPIView/",
+                    async: false,
+                    data: {
+                        bookId: bookId,
+                        testimonials: v.editTestimonials,
+                        headImgBook: v.editHeadImgBook,
+                        hotBook: v.editHotBook,
+                        freeBook: v.editFreeBook,
+                        rankBook: v.editRankBook,
+                        newBook: v.editNewBook,                        
+                    },
+                    dataType: "json",
+                    type: "GET",
+                    success: function(data) {
+                        console.log(data.code);
+                        if (!data.code) {
 
+					        window.location.href = "/bookManager/";
                         }
                     },
                     error: function() {

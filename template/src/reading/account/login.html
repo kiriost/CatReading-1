@@ -17,12 +17,15 @@
 		<div class="middle">
 			<div class="content" id="content">	
 					<div class="userLogin">
-					<form class="search" autocomplete="off" style="margin-top:20px" onsubmit="return checksubmit()" name="login">
+					<form class="search" autocomplete="off" style="margin-top:20px" name="login">
 						<div class="bkAccount">
-							<input type="text" name="userName" class="accountText beganLogin" id="userName" placeholder='请输入猫阅读用户名/手机号'/>
+							<input type="text" name="userName" class="accountText beganLogin" id="userName" placeholder='请输入手机号'/>
 						</div>
 						<div class="bkPassword">
 							<input type="password" name="password" id="password" class="accountPassword beganLogin" placeholder='请输入密码'/>
+						</div>
+						<div style="color: #E53935;font-size: 42px; padding-top: 25px;">
+							<span id="error-info"></span>
 						</div>
 						<input type="submit" value="登陆" class="loginButton" />
 						<div class="loginChoose clearfix">
@@ -32,7 +35,7 @@
 								" style="display: none; width:50px; height:50px;" class="loginNo">
 								<span>记住密码</span>
 							</div>
-							<div class="chooseright"><a href="oneFind.html">忘记密码</a></div>
+							<div class="chooseright"><a href="/oneFind/">忘记密码</a></div>
 						</div>
 					</form>
 					<div class="otherWay">
@@ -62,8 +65,12 @@
 				success: function (data) {
 					console.log(data.code);
 					if(!data.code) {
-						console.log(data.data)
-						window.location.href = "/index/";
+						console.log(data.data);
+						window.location.href = "/";
+					}else{
+						console.log(data.data);
+						$("#error-info").empty();
+						$("#error-info").append(data.data);
 					}
 				},
 				error: function (){

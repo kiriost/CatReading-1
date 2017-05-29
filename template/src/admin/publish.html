@@ -115,14 +115,14 @@
             }]
         },
         methods: {
-            del: function() {
+            del: function(chaptersId) {
                 $.ajax({
                     beforeSend: csrfTokenHeader,
                     url: "/DeleteChapterAPIView/",
                     async: false,
                     data: {
                         bookId: v.bookId,
-                        chaptersId: v.chaptersId
+                        chaptersId: chaptersId
                     },
                     dataType: "json",
                     type: "GET",
