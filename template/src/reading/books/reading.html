@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=0.36,user-scalable=no,minimal-ui">
 		<meta name="format-detection" content="telephone=no">
-		<link rel="stylesheet" href="../../../../static/src/css/reset.css">
+		<link rel="stylesheet" href="/static/src/css/reset.css">
 		<title>阅读器</title>
 		<style type="text/css">
 		html{
@@ -23,7 +23,7 @@
 		.middle h4{
 			color: #353535;
 		}
-		.navRoute{
+		.navRoute{	
 			text-overflow: ellipsis;
    	 		white-space: nowrap;
     		overflow: hidden;
@@ -33,7 +33,7 @@
 		}
 		.navRoute a.navTxt{
 			color: #999;
-			display: inline-block;
+			display: inline-block;	
 			vertical-align: middle;
 			line-height: 80px;
 		}
@@ -41,14 +41,14 @@
 			width: 50px;
 			height: 50px;
 			display: inline-block;
-			background: url(../../../../static/src/img/icon/home.png) no-repeat;
+			background: url(/static/src/img/icon/home.png) no-repeat;
 			vertical-align: middle;
-		}
+		}	
 		.navjiantou{
 			width: 50px;
 			height: 50px;
 			display: inline-block;
-			background: url(../../../../static/src/img/icon/onejiantou.png) no-repeat left;
+			background: url(/static/src/img/icon/onejiantou.png) no-repeat left;
 			vertical-align: middle;
 			margin-left: 18px;
 		}
@@ -99,11 +99,11 @@
  			margin: 0 6px;
  		}
  		.day{
- 			background: url(../../../../static/src/img/icon/sun.png);
+ 			background: url(/static/src/img/icon/sun.png);
  			background-size: 100% 100%;
  		}
  		.night{
- 			background: url(../../../../static/src/img/icon/night.png) no-repeat;
+ 			background: url(/static/src/img/icon/night.png) no-repeat;
  			background-size: 100% 100%;
  		}
  		.fontAdj{
@@ -130,7 +130,7 @@
  			color: #666;
  			line-height: 70px;
  			padding: 28px 0;
- 			text-indent: 2em;
+ 			text-indent: 2em; 	
  		}
  		.author-say {
 		    padding: 35px;
@@ -206,18 +206,9 @@
 		</style>
 	</head>
 	<body>
-		<!-- <div class="root" class="container">
-			<div class="collection clearfix">
-				<div class="collecText">收藏本书</div>
-				<div class="collectButton">
-					<button class="collectSure" value="1">确定</button>
-					<button class="collectCancel" value="0">取消</button>
-				</div>
-			</div>
-			<!-- collection结束 -->
 			<div class="content">
 				<div class="navRoute">
-					<a href="#" class="navHome"></a><span class="navjiantou"></span><a href="#" class="navTxt" id="bookName"></a><span class="navjiantou"></span><a href="#" class="navTxt">章节目录</a>
+					<a href="#" class="navHome"></a><span class="navjiantou"></span><a href="#" class="navTxt" id="bookName"></a><span class="navjiantou"></span><a href="#" class="navTxt" id="navTxt">章节目录</a>
 				</div>
 				<div class="middle">
 					<h4 id="title"></h4>
@@ -236,14 +227,14 @@
 					</div>
 					<!-- adjust结束 -->
 					<div class="contentTxt" id="contentTxt">
-
+						<p></p>
 					</div>
 
 					<!--	 -->
 					<div class="goButton">
 						<ul class="u-tap">
-							<li class="prev-button">上一章</li>
-							<li class="">目 录</li>
+							<li class="preButton" id="preButton">上一章</li>
+							<li><a style="color: #FFF; width: 100%; height: 100%; display: block;" id = "footCatalogue">目 录</a></li>
 							<li class="next-button" id="nextButton">下一章</li>
 						</ul>
 					</div>
@@ -282,6 +273,7 @@
 			var bigger = $('#bigger');
 			var smaller = $('#smaller');
 			var nextButton = $('#nextButton');
+			var preButton = $('#preButton');
 			//背景颜色设置
 			InitBackgroundColor = Util.storageGetter('background_color');
 			if (!InitBackgroundColor) {
@@ -296,7 +288,7 @@
 			}else{
 				body.css('background-color', InitBackgroundColor);
 			}
-
+			
 			//背景颜色切换
 			function bgChange(currentColor){
 				body.css('background-color',currentColor);
@@ -315,10 +307,10 @@
 				bgChange($(this).css('background-color'));
 			});
 			secondColor.click(function(){
-				bgChange($(this).css('background-color'));
+				bgChange($(this).css('background-color')); 
 			});
 			thirdColor.click(function(){
-				bgChange($(this).css('background-color'));
+				bgChange($(this).css('background-color')); 
 			});
 			//白天黑夜模式切换
 			function changeDayNight(){
@@ -334,7 +326,7 @@
 					title.css('color','#BE9A51');
 					NightMode = true;
 				}
-				InitBackgroundColor = body.css('background-color');
+				InitBackgroundColor = body.css('bac-kground-color');
 				Util.storageSetter('background_color', InitBackgroundColor);
 			}
 			dayNight.click(function(){
@@ -367,91 +359,56 @@
 				contentTxt.css('font-size',InitFontSize);
 			});
 
-
-			// 正则解析url携带参数
-			$(document).ready(function(){
-				var s = window.location.href.split('/')
-				var bookId = null;
-				var chaptersId = null;
-				for(x in s){
-					var bookIdTest = new RegExp("^[0-9]+$").test(s[x])
-					if(bookIdTest==true){
-						if(bookId ==null){
-							bookId = parseInt(s[x]);
-							console.log("bookId:"+bookId);
-						}
-						else{
-							chaptersId = parseInt(s[x]);
-							console.log("chaptersId:"+chaptersId);
-						}
-					}
-				}
-				var url = "/ReadingViewAPI/";
-				$.get(url, {"chaptersId": chaptersId, "bookId": bookId}, function(data){  //页面加载时绑定
-					data = $.parseJSON(data);
-					//数据处理
-					$('#title').html(data.chaptersName);
-					var contentArrays = data.chaptersContent.split('\n');
-					$('#contentTxt').empty();
-					console.log(contentArrays);
-					for(var i = 0; i < contentArrays.length; i++){
-						$('#contentTxt').append('<p>' + contentArrays[i] + '</p>');
-					}
-					<!--$('#contentTxt').html(data.chaptersContent);-->
-				})
-			});
-
 			//数据
-			var id = 0;
-			<!--var url = "/ReadingViewAPI/";-->
-			<!--$.get(url, {"chaptersId": 1, "bookId": 2}, function(data){  //页面加载时绑定-->
-				<!--data = $.parseJSON(data);-->
-				<!--&lt;!&ndash;id = 1;&ndash;&gt;-->
-				<!--//数据处理-->
-				<!--$('#title').html(data.chaptersName);-->
-				<!--&lt;!&ndash;$('#bookName').html(data.chaptersContent);&ndash;&gt;-->
-				<!--&lt;!&ndash;for(var i in data.items)&ndash;&gt;-->
-					<!--&lt;!&ndash;$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');&ndash;&gt;-->
-				<!--$('#contentTxt').html(data.chaptersContent);-->
-			<!--})-->
+			var charpterId = 1;	//章节id需要切
+			var bookId = 1;		//书籍id需要切
+			var bookurl = document.location.href;
+			var bookArray = bookurl.split('/');
+			bookId = bookArray[4];
+			charpterId = bookArray[6];
+			var allId = 10;
+			function changePage(data){		//改变内容函数
+				var arrays = data.chaptersContent.split('\n');
+				allId = data.chaptersNumber
+				//数据处理
+				$('#title').html('第' + charpterId + '章  ' + data.chaptersName);
+				$('#bookName').attr('href', '../../../' + bookId + '/')							//退几层要试，找前端
+				$('#navTxt').attr('href', '../../../' + bookId + '/charpters/' + charpterId + '/')
+				$('#footCatalogue').attr('href', '/catalogue/' + bookId)
+				$('#bookName').html(data.bookName);
+				$('#contentTxt').html('')
+				for(var i = 0; i <arrays.length; i++){
+					$('#contentTxt').append('<p>' + arrays[i] + '</p>');
+				}
+					
+			}
+
+			var url = "/ReadingViewAPI/";
+			$.get(url, {"chaptersId": charpterId, "bookId": bookId}, function(data){  //页面加载时绑定
+				data = $.parseJSON(data);
+				changePage(data)
+			})
 			nextButton.click(function(){     //点下一章时绑定
-				if (id == chapters.length - 1) {
-					return
+				if (charpterId >= allId	) {
+					return  
 				}
-				id++;
-				$.get(url, {id,}, function(data){
-					var arrays = new Array();
-					<!--arrays = data.neirong.split("#");-->
-					console.log(arrays);
-					//数据处理
-					$('#title').html(data.chaptersName);
-					$('#bookName').html(data.chaptersContent);
-					for(var i in data.items)
-						$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');
-
-				})
-			})
-
-			nextButton.click(function(){     //点上一章时绑定
-				if (id == 0) {
-					return
-				}
-				id--;
-				$.get(url, {"chatpId": 1, "bookId": 0}, function(data){
+				charpterId++;
+				$.get(url, {"chaptersId": charpterId, "bookId": bookId}, function(data){
 					data = $.parseJSON(data);
-					var arrays = new Array();
-					<!--arrays = data.neirong.split("#");-->
-					console.log(arrays);
-					//数据处理
-					$('#title').html(data.chaptersName);
-					$('#bookName').html(data.chaptersName);
-					<!--for(var i in data.items)-->
-						<!--$('#contentTxt').append('<p>' + data.items[i].chaptersContent + '</p>');-->
-					$('#contentTxt').html(data.chaptersContent);
-
+					changePage(data)
 				})
 			})
 
+			preButton.click(function(){     //点上一章时绑定
+				if (charpterId <= 1) {
+					return
+				}
+				charpterId--;
+				$.get(url, {"chaptersId": charpterId, "bookId": bookId}, function(data){
+					data = $.parseJSON(data);
+					changePage(data)
+				})
+			})
 		</script>
 	</body>
 </html>

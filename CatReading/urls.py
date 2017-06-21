@@ -57,12 +57,17 @@ urlpatterns = [
     url(r'^oneRegister/', account.views.oneRegisterPage, name='firstRegister'),
     url(r'^twoRegister/', account.views.twoRegisterPage, name='twoRegister'),
     url(r'^threeRegister/$', account.views.threeRegisterPage, name='threeRegister'),
+    url(r'^readerAgreement/$', account.views.readerAgreementPage, name='threeRegister'),
+
 
     # 找回密码页面
     url(r'^oneFind/$', account.views.oneFindPage, name='oneFind'),
     url(r'^twoFind/$', account.views.twoFindPage, name='twoFind'),
     url(r'^threeFind/$', account.views.threeFindPage, name='threeFind'),
     url(r'^fourFind/$', account.views.fourFindPage, name='fourFind'),
+
+    url(r'^payContail/$', account.views.payContailPage, name='payContail'),
+    url(r'^payMent/$', account.views.payMentPage, name='payMent'),
                                                                 
     url(r'^createBook/$', admin.views.createBookPage, name='createbook'),
     url(r'^bookManager/$', admin.views.BookManagerPage, name='bookManager'),

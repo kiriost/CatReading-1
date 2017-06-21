@@ -20,6 +20,7 @@ from utils import SendMessage, shortcuts
 from utils.captcha import Captcha
 from django.views.decorators.csrf import csrf_exempt
 from account.models import UserChaseBooks, UserProfile
+from account.decorators import admin_required
 
 """
     Author:	         毛毛
@@ -78,10 +79,11 @@ class UserRegisterAPIView(APIView):
         print request.data
         serializer = UserRegisterSerializer(data=request.data)
         phone = request.session.get('phone')
+        print phone
 
         if serializer.is_valid():
             data = serializer.data
-            user = User.objects.create(userName=data['userName'], phone=phone)
+            user = User.objects.create(phone=phone)
             user.set_password(data["password"])
             user.save()
             userProfile = UserProfile(User=user)
@@ -393,3 +395,39 @@ def threeFindPage(request):
 
 def fourFindPage(request):
     return render(request, "reading/account/fourFind.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/04/18
+    Description:     读者注册协议页面
+"""
+
+
+def readerAgreementPage(request):
+    return render(request, "reading/account/readerAgreement.html")
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/04/18
+    Description:     读者支付页面
+"""
+
+
+@ admin_required
+def payContailPage(request):
+    return render(request, "reading/account/payContail.html")
+
+
+"""
+    Author:	         毛毛
+    Version:         0.01v
+    Date:            2017/04/18
+    Description:     读者支付页面
+"""
+
+
+def payMentPage(request):
+    return render(request, "reading/account/payment.html")

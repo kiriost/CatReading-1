@@ -18,9 +18,7 @@ class CheckPhoneSerializer(serializers.Serializer):
 
 
 class UserRegisterSerializer(serializers.Serializer):
-    userName = serializers.CharField(max_length=30)
     password = serializers.CharField(max_length=30, min_length=6)
-    # phone = serializers.CharField(max_length=11)
 
 
 class UserChaseBooksSerializer(serializers.Serializer):

@@ -280,7 +280,7 @@ class LibraryAPIView(APIView):
 
         clicksNumber = request.GET['bookHot']
 
-        books = BookInfo.objects.filter(id=4).all()
+        books = BookInfo.objects.all()
 
         endTime = datetime.now()
 
@@ -363,8 +363,11 @@ def ReadingViewAPI(request):
     if request.method == 'GET':
         bookId = request.GET['bookId']
         chaptersId = request.GET['chaptersId']
+        print bookId
+        print chaptersId
+        book = BookInfo.objects.get(id=bookId)
         bookChapter = BooksContent.objects.filter(BookInfo__id=bookId).filter(chaptersId=chaptersId).get()
-        response = JsonResponse({'chaptersName': bookChapter.chaptersName,
+        response = JsonResponse({'bookName': book.bookName, 'chaptersNumber': book.chaptersNumber, 'chaptersName': bookChapter.chaptersName,
                                  'chaptersContent': bookChapter.chaptersContent})
         return HttpResponse(response)
     else:

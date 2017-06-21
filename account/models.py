@@ -17,7 +17,7 @@ ADMIN = 1
 
 class User(AbstractBaseUser):
     # 用户名
-    userName = models.CharField(max_length=32, unique=True)
+    userName = models.CharField(max_length=32, default="用户")
     # 电话号码
     phone = models.CharField(max_length=11, unique=True)
     # 是否可用

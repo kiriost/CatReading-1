@@ -118,7 +118,7 @@ class BookInfoSerializers(serializers.ModelSerializer):
 
 class LibrarySerializers(serializers.ModelSerializer):
     chaptersName = serializers.SerializerMethodField()
-    updateTime = serializers.SerializerMethodField()    
+    updateTime = serializers.SerializerMethodField()
 
     class Meta:
         model = BookInfo

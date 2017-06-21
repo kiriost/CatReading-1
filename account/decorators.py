@@ -38,3 +38,8 @@ class BasePermissionDecorator(object):
 class login_required(BasePermissionDecorator):
     def check_permission(self):
         return self.request.user.is_authenticated()
+
+
+class admin_required(BasePermissionDecorator):
+    def check_permission(self):
+        return self.request.user.is_authenticated() and self.request.user.adminType == 1

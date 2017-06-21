@@ -21,3 +21,4 @@ def SendMessage(phone, code):
     except Exception, e:
         return e
 
+# SendMessage("15623637978", "3030")
